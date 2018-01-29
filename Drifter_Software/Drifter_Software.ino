@@ -14,9 +14,7 @@
 ************************************************************/
 # include <LiquidCrystal.h> 
 
-
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
-
 
 // define some values used by the panel and buttons
 int lcd_key     = 0;
