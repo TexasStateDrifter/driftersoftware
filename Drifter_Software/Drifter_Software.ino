@@ -11,7 +11,7 @@
 * for easy interaction with the drifter.
 * 
 * 
-************************************************************
+************************************************************/
 # include <LiquidCrystal.h> 
 
 
@@ -54,7 +54,7 @@ void menuCursor(int d){
     lcd.print(d);
     lcd.setCursor(5, d - 1);
     lcd.print(" ");
-    lcd.setCursor(5,d);
+    lcd.setCursor(5, d);
     lcd.print("*");
   }
   else if (d == 0) {
@@ -62,7 +62,7 @@ void menuCursor(int d){
     lcd.print(d);
     lcd.setCursor(5, d + 1);
     lcd.print(" ");
-    lcd.setCursor(5,d);
+    lcd.setCursor(5, d);
     lcd.print("*");
   }
 
