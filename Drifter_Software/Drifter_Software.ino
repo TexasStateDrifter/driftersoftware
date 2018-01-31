@@ -47,27 +47,35 @@ int read_LCD_buttons(){               // read the buttons
 }
 
 void menuCursor(int d){
-  if (d > 0) { 
-    lcd.setCursor(0,1);
-    lcd.print(d);
-    lcd.setCursor(5, d - 1);
-    lcd.print(" ");
-    lcd.setCursor(5, d);
-    lcd.print("*");
+  if (d == 0) { 
+    lcd.setCursor(5,0);
+    lcd.print("*Option 0");
+    lcd.setCursor(5,1);
+    lcd.print(" Option 1");
   }
-  else if (d == 0) {
-    lcd.setCursor(0,1);
-    lcd.print(d);
-    lcd.setCursor(5, d + 1);
-    lcd.print(" ");
-    lcd.setCursor(5, d);
-    lcd.print("*");
+  else if ( d == 1) {
+    lcd.setCursor(5,0);
+    lcd.print(" Option 0");
+    lcd.setCursor(5,1);
+    lcd.print("*Option 1");
+  }
+  else if (d == 2){
+    lcd.setCursor(6,0);
+    lcd.print("Option 1");
+    lcd.setCursor(6,1);
+    lcd.print("Option 2");
+  }
+  else if (d ==3){
+    lcd.setCursor(6,0);
+    lcd.print("Option 2");
+    lcd.setCursor(6,1);
+    lcd.print("Option 3");    
   }
 
 
 }
 
-int Z = 1 ;
+int Z = 0 ;
 
 void setup() {
   // put your setup code here, to run once:
@@ -99,18 +107,36 @@ void loop() {
              break;
        }    
        case btnUP:{
-       //      lcd.print("UP    ");  //  push button "UP" and show the word on the screen
-             Z = Z - 1 ;
+       //    lcd.print("UP    ");  //  push button "UP" and show the word on the screen
+             Z = Z - 1;
+             if(Z+1 == 1) {
+                Z = 0 ;
+             }
+             else if (Z + 1 <= 0 ){
+                Z = 0;
+             }
+             lcd.setCursor(0,1);
+             lcd.print(Z);
              menuCursor(Z);
+             delay(400);
              break;
        }
        case btnDOWN:{
        //      lcd.print("DOWN  ");  //  push button "DOWN" and show the word on the screen
              Z = Z + 1 ;
-             Serial.print(Z);
+             if(Z-1 == 0) {
+                Z = 1;
+             }
+             else if (Z-1 >= 3) {
+                Z = 3; 
+             }
+             lcd.setCursor(0,1);
+             lcd.print(Z);
+             Serial.print(Z); // prints Z to serial
              menuCursor(Z);
-
+             delay(400);
              break;
+             
        }
        case btnSELECT:{
        //      lcd.print("SELECT");  //  push button "SELECT" and show the word on the screen
