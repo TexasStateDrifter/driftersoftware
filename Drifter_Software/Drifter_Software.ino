@@ -8,7 +8,7 @@
 * allow one to connect a Dissolved Oxygen, pH, 
 * temperature and conductivity sensor to sample 
 * water quality. A User interface was also developed
-* for easy interaction with the drifter.
+* for easy interaction with the drifter and its settings.
 * 
 * 
 ************************************************************/
@@ -26,6 +26,17 @@ int adc_key_in  = 0;
 #define btnLEFT   3
 #define btnSELECT 4
 #define btnNONE   5
+#define menuOption0 "Option 0"
+#define menuOption1 "Option 1"
+#define menuOption2 "Option 2"
+#define menuOption3 "Option 3"
+#define menuOption4 "Option 4"
+#define menuOption5 "Option 5"
+#define subOption00 "subOpt0-0"
+#define subOption01 "subOpt0-1"
+#define subOption10 "subOpt1-0"
+#define subOption11 "subOpt1-1"
+#define OPTION_COUNT 7 // Number of total options
 
 int read_LCD_buttons(){               // read the buttons
     adc_key_in = analogRead(0);       // read the value from the sensor 
@@ -46,108 +57,164 @@ int read_LCD_buttons(){               // read the buttons
     return btnNONE;                // when all others fail, return this.
 }
 
-void menuCursor(int d){
-  if (d == 0) { 
-    lcd.setCursor(5,0);
-    lcd.print("*Option 0");
-    lcd.setCursor(5,1);
-    lcd.print(" Option 1");
-  }
-  else if ( d == 1) {
-    lcd.setCursor(5,0);
-    lcd.print(" Option 0");
-    lcd.setCursor(5,1);
-    lcd.print("*Option 1");
-  }
-  else if (d == 2){
-    lcd.setCursor(6,0);
-    lcd.print("Option 1");
-    lcd.setCursor(6,1);
-    lcd.print("Option 2");
-  }
-  else if (d ==3){
-    lcd.setCursor(6,0);
-    lcd.print("Option 2");
-    lcd.setCursor(6,1);
-    lcd.print("Option 3");    
-  }
-
-
-}
-
-int Z = 0 ;
 
 void setup() {
-  // put your setup code here, to run once:
+  // setup code here, runs once at start up:
   lcd.begin(16, 2);
   lcd.setCursor(5, 0);
-  lcd.print("*Option 0");
+  lcd.print("*");
+  lcd.print(menuOption0);
   lcd.setCursor(6,1);
-  lcd.print("Option 1");
+  lcd.print(menuOption1);
   Serial.begin(9600);
 }
 
- 
+// Menu Counter
+int Z = 0 ;
+
 void loop() {
-  // put your main code here, to run repeatedly:
-   
-  lcd.setCursor(0,1);             // move to the begining of the second line
  
- 
+  lcd.setCursor(0,0);             // move to the begining of the second line
   lcd_key = read_LCD_buttons();   // read the buttons
   
   switch (lcd_key){               // depending on which button was pushed, we perform an action
     
        case btnRIGHT:{             //  push button "RIGHT" and show the word on the screen
-       //     lcd.print("RIGHT ");
+            lcd.print("RIGHT");
+            delay(400);
             break;
        }
        case btnLEFT:{
-       //      lcd.print("LEFT   "); //  push button "LEFT" and show the word on the screen
+             lcd.print("LEFT "); //  push button "LEFT" and show the word on the screen
+             delay(400);
              break;
        }    
        case btnUP:{
-       //    lcd.print("UP    ");  //  push button "UP" and show the word on the screen
-             Z = Z - 1;
-             if(Z+1 == 1) {
-                Z = 0 ;
-             }
-             else if (Z + 1 <= 0 ){
-                Z = 0;
-             }
-             lcd.setCursor(0,1);
-             lcd.print(Z);
-             menuCursor(Z);
+             lcd.print("UP   ");  //  push button "UP" and show the word on the screen
+             Z = menuUp(Z);
              delay(400);
              break;
        }
        case btnDOWN:{
-       //      lcd.print("DOWN  ");  //  push button "DOWN" and show the word on the screen
-             Z = Z + 1 ;
-             if(Z-1 == 0) {
-                Z = 1;
-             }
-             else if (Z-1 >= 3) {
-                Z = 3; 
-             }
-             lcd.setCursor(0,1);
-             lcd.print(Z);
-             Serial.print(Z); // prints Z to serial
-             menuCursor(Z);
+             lcd.print("DOWN   ");  //  push button "DOWN" and show the word on the screen
+             Z = menuDown(Z);
              delay(400);
              break;
              
        }
        case btnSELECT:{
-       //      lcd.print("SELECT");  //  push button "SELECT" and show the word on the screen
+             lcd.print("SEL  ");  //  push button "SELECT" and show the word on the screen
+             Z = menuSel(Z);
+             delay(400);
              break;
        }
        case btnNONE:{
-       //      lcd.print("NONE  ");  //  No action  will show "None" on the screen
+           lcd.print("NONE ");  //  No action  will show "None" on the screen
            lcd.setCursor(0,1);
-   lcd.print(Z);
+           lcd.print(Z);
              break;
        }
   }
-   
+
 }
+
+  // function takes menu counter and modifies lcd based on counter value
+  void menuCursor(int d){
+  if (d == 0) { 
+    lcd.setCursor(5,0);
+    lcd.print("*");
+    lcd.print(menuOption0);
+    lcd.setCursor(5,1);
+    lcd.print(" ");
+    lcd.print(menuOption1);
+  }
+  else if ( d == 1) {
+    lcd.setCursor(5,0);
+    lcd.print(" ");
+    lcd.print(menuOption0);
+    lcd.setCursor(5,1);
+    lcd.print("*");
+    lcd.print(menuOption1);
+  }
+  else if (d == 2){
+    lcd.setCursor(6,0);
+    lcd.print(menuOption1);
+    lcd.setCursor(6,1);
+    lcd.print(menuOption2);
+  }
+  else if (d ==3){
+    lcd.setCursor(6,0);
+    lcd.print(menuOption2);
+    lcd.setCursor(6,1);
+    lcd.print(menuOption3);    
+  }
+  else if (d ==4){
+    lcd.setCursor(6,0);
+    lcd.print(menuOption3);
+    lcd.setCursor(6,1);
+    lcd.print(menuOption4);    
+  }
+  else if (d == 5){
+    lcd.setCursor(6,0);
+    lcd.print(menuOption4);
+    lcd.setCursor(6,1);
+    lcd.print(menuOption5);
+  }
+  else if (d == 6){
+    lcd.setCursor(5,0);
+    lcd.print("*");
+    lcd.print(subOption00);
+    lcd.setCursor(5,1);
+    lcd.print(" ");
+    lcd.print(subOption01);
+  }
+  else if (d == 7){
+    lcd.setCursor(5,0);
+    lcd.print(" ");
+    lcd.print(subOption00);
+    lcd.setCursor(5,1);
+    lcd.print("*");
+    lcd.print(subOption01);
+  }
+}
+
+// Pressing up button will decrement menu counter. Lowest value is 0. 
+int menuUp(int i) {
+    i = i - 1;
+    if(i + 1 == 1) {
+      i = 0 ;
+    }
+    else if (i + 1 <= 0 ){
+      i = 0;
+    }
+    lcd.setCursor(0,1);
+    lcd.print(i);
+    menuCursor(i);
+    return i;
+}
+
+// Pressing down button increase counter by 1. 
+int menuDown(int i) {
+    i = i + 1 ;
+    if(i - 1 == 0) {
+      i = 1;
+    }
+    else if (i-1 >= OPTION_COUNT) {
+      i = OPTION_COUNT; 
+    }  
+    lcd.setCursor(0,1);
+    lcd.print(i);
+    menuCursor(i);
+    return i;
+}
+
+
+int menuSel(int i){
+  i = i + 6 ;
+  lcd.setCursor(0,1);
+  lcd.print(i);
+  menuCursor(i);
+  return i;
+}
+
+
