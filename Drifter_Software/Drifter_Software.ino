@@ -32,11 +32,13 @@ int adc_key_in  = 0;
 #define menuOption3 "Option 3"
 #define menuOption4 "Option 4"
 #define menuOption5 "Option 5"
-#define subOption00 "subOpt0-0"
-#define subOption01 "subOpt0-1"
-#define subOption10 "subOpt1-0"
-#define subOption11 "subOpt1-1"
-#define OPTION_COUNT 7 // Number of total options
+#define subOption00 "subOpt00"
+#define subOption01 "subOpt01"
+#define subOption10 "subOpt10"
+#define subOption11 "subOpt11"
+#define menuOptCount 5 // Number of total menu options
+#define subOptCount 2 // Number of total sub options
+bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu(1). 
 
 int read_LCD_buttons(){               // read the buttons
     adc_key_in = analogRead(0);       // read the value from the sensor 
@@ -69,9 +71,11 @@ void setup() {
   Serial.begin(9600);
 }
 
-// Menu Counter
-int Z = 0 ;
+// Menu Counter, Z, and subMenu Counter, K
+int Z = 0, K = 0; 
 
+
+// Main Program 
 void loop() {
  
   lcd.setCursor(0,0);             // move to the begining of the second line
@@ -86,18 +90,19 @@ void loop() {
        }
        case btnLEFT:{
              lcd.print("LEFT "); //  push button "LEFT" and show the word on the screen
+             Z = menuLeft(Z);
              delay(400);
              break;
        }    
        case btnUP:{
              lcd.print("UP   ");  //  push button "UP" and show the word on the screen
-             Z = menuUp(Z);
+             Z = menuUp(Z,K);
              delay(400);
              break;
        }
        case btnDOWN:{
              lcd.print("DOWN   ");  //  push button "DOWN" and show the word on the screen
-             Z = menuDown(Z);
+             Z = menuDown(Z,K);
              delay(400);
              break;
              
@@ -118,7 +123,10 @@ void loop() {
 
 }
 
-  // function takes menu counter and modifies lcd based on counter value
+
+
+  // function takes menu counter and modifies lcd based on counter value.
+  // Made it just to work, but need to optimize to minimize repetative code.
   void menuCursor(int d){
   if (d == 0) { 
     lcd.setCursor(5,0);
@@ -137,30 +145,39 @@ void loop() {
     lcd.print(menuOption1);
   }
   else if (d == 2){
-    lcd.setCursor(6,0);
-    lcd.print(menuOption1);
-    lcd.setCursor(6,1);
+    lcd.setCursor(5,0);
+    lcd.print("*");
     lcd.print(menuOption2);
+    lcd.setCursor(5,1);
+    lcd.print(" ");
+    lcd.print(menuOption3);
   }
   else if (d ==3){
-    lcd.setCursor(6,0);
+    lcd.setCursor(5,0);
+    lcd.print(" ");
     lcd.print(menuOption2);
-    lcd.setCursor(6,1);
+    lcd.setCursor(5,1);
+    lcd.print("*");
     lcd.print(menuOption3);    
   }
   else if (d ==4){
-    lcd.setCursor(6,0);
-    lcd.print(menuOption3);
-    lcd.setCursor(6,1);
-    lcd.print(menuOption4);    
+    lcd.setCursor(5,0);
+    lcd.print("*");
+    lcd.print(menuOption4);
+    lcd.setCursor(5,1);
+    lcd.print(" ");
+    lcd.print(menuOption5);    
   }
   else if (d == 5){
-    lcd.setCursor(6,0);
+    lcd.setCursor(5,0);
+    lcd.print(" ");
     lcd.print(menuOption4);
-    lcd.setCursor(6,1);
+    lcd.setCursor(5,1);
+    lcd.print("*");
     lcd.print(menuOption5);
   }
   else if (d == 6){
+    menuMode = 1;
     lcd.setCursor(5,0);
     lcd.print("*");
     lcd.print(subOption00);
@@ -176,10 +193,18 @@ void loop() {
     lcd.print("*");
     lcd.print(subOption01);
   }
+  else if(d == 8){
+    lcd.setCursor(5,0);
+    lcd.print(" ");
+    lcd.print(subOption00);
+    lcd.setCursor(5,1);
+    lcd.print("*");
+    lcd.print(subOption01);
+  }
 }
 
 // Pressing up button will decrement menu counter. Lowest value is 0. 
-int menuUp(int i) {
+int menuUp(int i, int m) {
     i = i - 1;
     if(i + 1 == 1) {
       i = 0 ;
@@ -194,14 +219,25 @@ int menuUp(int i) {
 }
 
 // Pressing down button increase counter by 1. 
-int menuDown(int i) {
+int menuDown(int i, int m) {
     i = i + 1 ;
-    if(i - 1 == 0) {
-      i = 1;
+    
+    if(menuMode == 0){  // If in Main menu
+      if(i - 1 == 0) {
+        i = 1;
+      }
+      else if (i - 1 >= menuOptCount) {
+        i = menuOptCount; 
+      }
     }
-    else if (i-1 >= OPTION_COUNT) {
-      i = OPTION_COUNT; 
-    }  
+    else if(menuMode == 1){ // If in Sub menu
+      if(m == 1){
+        i -= 1;
+      }
+      else{
+        i += 1;
+      }
+    }
     lcd.setCursor(0,1);
     lcd.print(i);
     menuCursor(i);
@@ -215,6 +251,16 @@ int menuSel(int i){
   lcd.print(i);
   menuCursor(i);
   return i;
+}
+
+int menuLeft(int i){
+  menuMode = 0;
+  K = 0 ;
+  i = 0 ;
+  lcd.setCursor(0,1);
+  lcd.print(i);
+  menuCursor(i);
+  return(i);
 }
 
 
