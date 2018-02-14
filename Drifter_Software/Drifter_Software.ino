@@ -12,7 +12,8 @@
 * 
 * 
 ************************************************************/
-# include <LiquidCrystal.h> 
+#include <LiquidCrystal.h> 
+
 
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
@@ -26,19 +27,23 @@ int adc_key_in  = 0;
 #define btnLEFT   3
 #define btnSELECT 4
 #define btnNONE   5
-#define menuOption0 "Option 0"
-#define menuOption1 "Option 1"
-#define menuOption2 "Option 2"
-#define menuOption3 "Option 3"
-#define menuOption4 "Option 4"
-#define menuOption5 "Option 5"
-#define subOption00 "subOpt00"
-#define subOption01 "subOpt01"
-#define subOption10 "subOpt10"
-#define subOption11 "subOpt11"
-#define menuOptCount 5 // Number of total menu options
-#define subOptCount 2 // Number of total sub options
+#define MENU_COUNT 5 // Number of total MENU options
+#define SUBMENU_COUNT 2 // Max # of SUBMENU options for any menu option
 bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu(1). 
+
+
+// 2x2 Array of type String. Define ROW_MAX = # of menu Options
+// COLUMN_MAX = max # of sub options for any array.
+// If menu option has less then max, fill in with (" ") we will call this an empty space. 
+String menuOptions[6][3] = {{"Option 0","subOpt00","subOpt01"},
+                            {"Option 1","subOpt10","subOpt11"},
+                            {"Option 2","subOpt20","subOpt21"}, 
+                            {"Option 3","subOpt30","subOpt31"}, 
+                            {"Option 4","subOpt40","subOpt41"},
+                            {"Option 5","subOpt50","subOpt51"}};
+
+
+
 
 int read_LCD_buttons(){               // read the buttons
     adc_key_in = analogRead(0);       // read the value from the sensor 
@@ -65,13 +70,15 @@ void setup() {
   lcd.begin(16, 2);
   lcd.setCursor(5, 0);
   lcd.print("*");
-  lcd.print(menuOption0);
+  lcd.print(menuOptions[0][0]);
   lcd.setCursor(6,1);
-  lcd.print(menuOption1);
+  lcd.print(menuOptions[1][0]);
   Serial.begin(9600);
 }
 
-// Menu Counter, Z, and subMenu Counter, K
+// Menu Counter, Z, Gives you the position in the main menu
+// you are on. subMenu Counter, K, gives you the position in
+// the subMenu you are on.
 int Z = 0, K = 0; 
 
 
@@ -125,82 +132,57 @@ void loop() {
 
 
 
-  // function takes menu counter and modifies lcd based on counter value.
-  // Made it just to work, but need to optimize to minimize repetative code.
-  void menuCursor(int d){
-  if (d == 0) { 
-    lcd.setCursor(5,0);
+// Function: menuCursor takes in a parameter "d" from one of the 
+//           up, down, left, or select functions. "d" indicates 
+//           the main menu position and this function takes "d"
+//           and uses it to display the correct screen. 
+void menuCursor(int d){
+
+  // Clear the astick area. Note: I could just use lcd.clear()
+  // but using it makes the screen perform a noticable flicker.
+  lcd.setCursor(5,0);
+  lcd.print(" ");
+  lcd.setCursor(5,1);
+  lcd.print(" ");
+
+ 
+  
+  //lcd.setCursor(6,0);
+
+  
+  if(menuMode == 0){  // If in main menu mode
+
+    lcd.setCursor(5, d % 2);     // Set cursor to place astrick
     lcd.print("*");
-    lcd.print(menuOption0);
-    lcd.setCursor(5,1);
-    lcd.print(" ");
-    lcd.print(menuOption1);
+    
+    if(d <= MENU_COUNT and d % 2 == 1){  // If menu option and odd position number
+     lcd.print(menuOptions[d - 1][0]);
+     lcd.setCursor(6,1);
+     lcd.print(menuOptions[d][0]);
+    }
+    else if(d <=  MENU_COUNT and d % 2 == 0){  // If menu option and even position number
+     lcd.print(menuOptions[d][0]);
+     lcd.setCursor(6,1);
+     lcd.print(menuOptions[d+1][0]);
+    }
   }
-  else if ( d == 1) {
-    lcd.setCursor(5,0);
-    lcd.print(" ");
-    lcd.print(menuOption0);
-    lcd.setCursor(5,1);
-    lcd.print("*");
-    lcd.print(menuOption1);
+  else if(menuMode == 1) { // If in sub menu mode
+     lcd.setCursor(5, K % 2);
+     lcd.print("*");
+     
+    if(d <= MENU_COUNT and K == 0){  // 
+      lcd.print(menuOptions[d][K]);
+      lcd.setCursor(6,1);
+      lcd.print(menuOptions[d][K+1]);
+    }
+    else if(d <=  MENU_COUNT and K % 2 == 1){  // If menu option and even position number
+      lcd.print(menuOptions[d][K]);
+      lcd.setCursor(6,1);
+      lcd.print(menuOptions[d][K+1]);
+    }
   }
-  else if (d == 2){
-    lcd.setCursor(5,0);
-    lcd.print("*");
-    lcd.print(menuOption2);
-    lcd.setCursor(5,1);
-    lcd.print(" ");
-    lcd.print(menuOption3);
-  }
-  else if (d ==3){
-    lcd.setCursor(5,0);
-    lcd.print(" ");
-    lcd.print(menuOption2);
-    lcd.setCursor(5,1);
-    lcd.print("*");
-    lcd.print(menuOption3);    
-  }
-  else if (d ==4){
-    lcd.setCursor(5,0);
-    lcd.print("*");
-    lcd.print(menuOption4);
-    lcd.setCursor(5,1);
-    lcd.print(" ");
-    lcd.print(menuOption5);    
-  }
-  else if (d == 5){
-    lcd.setCursor(5,0);
-    lcd.print(" ");
-    lcd.print(menuOption4);
-    lcd.setCursor(5,1);
-    lcd.print("*");
-    lcd.print(menuOption5);
-  }
-  else if (d == 6){
-    menuMode = 1;
-    lcd.setCursor(5,0);
-    lcd.print("*");
-    lcd.print(subOption00);
-    lcd.setCursor(5,1);
-    lcd.print(" ");
-    lcd.print(subOption01);
-  }
-  else if (d == 7){
-    lcd.setCursor(5,0);
-    lcd.print(" ");
-    lcd.print(subOption00);
-    lcd.setCursor(5,1);
-    lcd.print("*");
-    lcd.print(subOption01);
-  }
-  else if(d == 8){
-    lcd.setCursor(5,0);
-    lcd.print(" ");
-    lcd.print(subOption00);
-    lcd.setCursor(5,1);
-    lcd.print("*");
-    lcd.print(subOption01);
-  }
+
+ 
 }
 
 // Pressing up button will decrement menu counter. Lowest value is 0. 
@@ -226,8 +208,8 @@ int menuDown(int i, int m) {
       if(i - 1 == 0) {
         i = 1;
       }
-      else if (i - 1 >= menuOptCount) {
-        i = menuOptCount; 
+      else if (i - 1 >= MENU_COUNT) {
+        i = MENU_COUNT; 
       }
     }
     else if(menuMode == 1){ // If in Sub menu
@@ -246,10 +228,11 @@ int menuDown(int i, int m) {
 
 
 int menuSel(int i){
-  i = i + 6 ;
+  menuMode = 1;
+  K += 1 ;
   lcd.setCursor(0,1);
   lcd.print(i);
-  menuCursor(i);
+  menuCursor(i);  
   return i;
 }
 
