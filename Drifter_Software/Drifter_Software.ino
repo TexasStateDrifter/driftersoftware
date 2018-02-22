@@ -12,21 +12,22 @@
 * 
 * 
 ************************************************************/
-#include <LiquidCrystal.h> 
+#include <Wire.h>
+#include <Adafruit_RGBLCDShield.h>
+#include <utility/Adafruit_MCP23017.h>
 
 
-LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
-// define some values used by the panel and buttons
-int lcd_key     = 0;
-int adc_key_in  = 0;
+// These #define make it easy to set the backlight color
+#define RED 0x1
+#define YELLOW 0x3
+#define GREEN 0x2
+#define TEAL 0x6
+#define BLUE 0x4
+#define VIOLET 0x5
+#define WHITE 0x7
 
-#define btnRIGHT  0
-#define btnUP     1
-#define btnDOWN   2
-#define btnLEFT   3
-#define btnSELECT 4
-#define btnNONE   5
 #define MENU_COUNT 6 // Number of total MENU options -- Modify the number of rows in the array
 #define SUBMENU_COUNT 2 // Max # of SUBMENU options for any menu option
 bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu(1). 
@@ -40,29 +41,6 @@ String menuOptions[MENU_COUNT][SUBMENU_COUNT+1] = {{"Option 0","subOpt00","subOp
                                                   {"Option 4","subOpt40","subOpt41"},
                                                   {"Option 5","subOpt50","subOpt51"}};
 
-
-
-
-int read_LCD_buttons(){               // read the buttons
-    adc_key_in = analogRead(0);       // read the value from the sensor 
-
-    // my buttons when read are centered at these valies: 0, 144, 329, 504, 741
-    // we add approx 50 to those values and check to see if we are close
-    // We make this the 1st option for speed reasons since it will be the most likely result
-
-    if (adc_key_in > 1000) return btnNONE; 
-
-    // For V1.1 us this threshold
-    if (adc_key_in < 50)   return btnRIGHT;  
-    if (adc_key_in < 250)  return btnUP; 
-    if (adc_key_in < 450)  return btnDOWN; 
-    if (adc_key_in < 650)  return btnLEFT; 
-    if (adc_key_in < 850)  return btnSELECT;  
-
-    return btnNONE;                // when all others fail, return this.
-}
-
-
 void setup() {
   // setup code sets up the 1st page of the main menu
   lcd.begin(16, 2);
@@ -73,6 +51,7 @@ void setup() {
   lcd.print(menuOptions[1][0]);
   Serial.begin(9600);
   menuMode = 0;
+  lcd.setBacklight(GREEN);
 }
 
 // Menu Counter, Z, Gives you the position in the main menu
@@ -85,45 +64,48 @@ int Z = 0, K = 0;
 void loop() {
  
   lcd.setCursor(0,0);             // move to the begining of the second line
-  lcd_key = read_LCD_buttons();   // read the buttons
+
+  uint8_t lcd_key = lcd.readButtons();  // Read the buttons 
+
+  
   
   switch (lcd_key){               // depending on which button was pushed, we perform an action
     
-       case btnRIGHT:{             //  push button "RIGHT" and show the word on the screen
+       case BUTTON_RIGHT:{             //  push button "RIGHT" and show the word on the screen
             lcd.print("RIGHT");
-            delay(400);
+            delay(300);
             break;
        }
-       case btnLEFT:{
+       case BUTTON_LEFT:{
              lcd.print("LEFT "); //  push button "LEFT" and show the word on the screen
              Z = menuLeft(Z);
-             delay(400);
+             delay(300);
              break;
        }    
-       case btnUP:{
+       case BUTTON_UP:{
              lcd.print("UP   ");  //  push button "UP" and show the word on the screen
              Z = menuUp(Z);
-             delay(400);
+             delay(300);
              break;
        }
-       case btnDOWN:{
+       case BUTTON_DOWN:{
              lcd.print("DOWN ");  //  push button "DOWN" and show the word on the screen
              Z = menuDown(Z);
-             delay(400);
+             delay(300);
              break;
              
        }
-       case btnSELECT:{
+       case BUTTON_SELECT:{
              lcd.print("SEL  ");  //  push button "SELECT" and show the word on the screen
              Z = menuSel(Z);
-             delay(400);
+             delay(300);
              break;
        }
-       case btnNONE:{
+       default :{
            lcd.print("NONE ");  //  No action  will show "None" on the screen
            lcd.setCursor(0,1);
            lcd.print(Z);
-             break;
+           break;
        }
   }
 
