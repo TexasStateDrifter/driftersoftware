@@ -19,7 +19,10 @@
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
-// These #define make it easy to set the backlight color
+// These #define make it easy to set the backlight color.
+// Note: Can delete this whole section if you know you want
+//       to set it to particular color. Backlight is color
+//       is initialized in "void setup()".
 #define RED 0x1
 #define YELLOW 0x3
 #define GREEN 0x2
@@ -33,7 +36,7 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu(1). 
 
 
-// 2x2 Array of type String. If submenu option has less then max, fill in with (" ").
+// 2-dim Array of type String. If submenu option has less then max, fill in with (" ").
 String menuOptions[MENU_COUNT][SUBMENU_COUNT+1] = {{"Option 0","subOpt00","subOpt01"},
                                                   {"Option 1","subOpt10","subOpt11"},
                                                   {"Option 2","subOpt20","subOpt21"}, 
@@ -59,15 +62,12 @@ void setup() {
 // the subMenu you are on.
 int Z = 0, K = 0; 
 
-
 // Main Program 
 void loop() {
  
   lcd.setCursor(0,0);             // move to the begining of the second line
 
   uint8_t lcd_key = lcd.readButtons();  // Read the buttons 
-
-  
   
   switch (lcd_key){               // depending on which button was pushed, we perform an action
     
@@ -92,8 +92,7 @@ void loop() {
              lcd.print("DOWN ");  //  push button "DOWN" and show the word on the screen
              Z = menuDown(Z);
              delay(300);
-             break;
-             
+             break;      
        }
        case BUTTON_SELECT:{
              lcd.print("SEL  ");  //  push button "SELECT" and show the word on the screen
@@ -110,7 +109,6 @@ void loop() {
   }
 
 }
-
 
 //////////////////////////////////////////////////////////////////
 // Function: menuCursor takes in a parameter "d" from one of the 
