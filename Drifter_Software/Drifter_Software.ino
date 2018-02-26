@@ -122,14 +122,14 @@ void menuCursor(int d){
   // Clear the astick area. Note: I could have just used lcd.clear()
   // but using it makes the screen perform a noticable flicker.
   lcd.setCursor(5,0);
-  lcd.print(" ");
+  lcd.print(F(" "));
   lcd.setCursor(5,1);
-  lcd.print(" ");
+  lcd.print(F(" "));
   lcd.setCursor(6,0);
   
   if(menuMode == 0){  // If in main menu mode
     lcd.setCursor(5, d % 2);     // Set cursor to place astrick
-    lcd.print("*");
+    lcd.print(F("*"));
     lcd.setCursor(6,0);
    
     if(d <= MENU_COUNT and d % 2 == 1){  // If menu option and odd position number
