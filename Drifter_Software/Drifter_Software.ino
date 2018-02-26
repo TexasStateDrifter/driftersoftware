@@ -13,6 +13,7 @@
 * 
 ************************************************************/
 #include <Wire.h>
+#include <avr/pgmspace.h>
 #include <Adafruit_RGBLCDShield.h>
 #include <utility/Adafruit_MCP23017.h>
 
@@ -37,12 +38,12 @@ bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu
 
 
 // 2-dim Array of type String. If submenu option has less then max, fill in with (" ").
-String menuOptions[MENU_COUNT][SUBMENU_COUNT+1] = {{"Option 0","subOpt00","subOpt01"},
-                                                  {"Option 1","subOpt10","subOpt11"},
-                                                  {"Option 2","subOpt20","subOpt21"}, 
-                                                  {"Option 3","subOpt30","subOpt31"}, 
-                                                  {"Option 4","subOpt40","subOpt41"},
-                                                  {"Option 5","subOpt50","subOpt51"}};
+String const menuOptions[MENU_COUNT][SUBMENU_COUNT+1] PROGMEM = {{"Option 0","subOpt00","subOpt01"},
+                                                   {"Sensors ","Temp    ","subOpt11"},
+                                                   {"Option 2","subOpt20","subOpt21"}, 
+                                                   {"Option 3","subOpt30","subOpt31"}, 
+                                                   {"Option 4","subOpt40","subOpt41"},
+                                                   {"Option 5","subOpt50","subOpt51"}};
 
 void setup() {
   // setup code sets up the 1st page of the main menu
@@ -72,36 +73,36 @@ void loop() {
   switch (lcd_key){               // depending on which button was pushed, we perform an action
     
        case BUTTON_RIGHT:{             //  push button "RIGHT" and show the word on the screen
-            lcd.print("RIGHT");
+            //lcd.print("RIGHT");
             delay(300);
             break;
        }
        case BUTTON_LEFT:{
-             lcd.print("LEFT "); //  push button "LEFT" and show the word on the screen
+             //lcd.print("LEFT "); //  push button "LEFT" and show the word on the screen
              Z = menuLeft(Z);
              delay(300);
              break;
        }    
        case BUTTON_UP:{
-             lcd.print("UP   ");  //  push button "UP" and show the word on the screen
+             //lcd.print("UP   ");  //  push button "UP" and show the word on the screen
              Z = menuUp(Z);
              delay(300);
              break;
        }
        case BUTTON_DOWN:{
-             lcd.print("DOWN ");  //  push button "DOWN" and show the word on the screen
+             //lcd.print("DOWN ");  //  push button "DOWN" and show the word on the screen
              Z = menuDown(Z);
              delay(300);
              break;      
        }
        case BUTTON_SELECT:{
-             lcd.print("SEL  ");  //  push button "SELECT" and show the word on the screen
+             //lcd.print("SEL  ");  //  push button "SELECT" and show the word on the screen
              Z = menuSel(Z);
              delay(300);
              break;
        }
        default :{
-           lcd.print("NONE ");  //  No action  will show "None" on the screen
+           //lcd.print("NONE ");  //  No action  will show "None" on the screen
            lcd.setCursor(0,1);
            lcd.print(Z);
            break;
@@ -113,8 +114,8 @@ void loop() {
 //////////////////////////////////////////////////////////////////
 // Function: menuCursor takes in a parameter "d" from one of the 
 //           up, down, left, or select functions. "d" indicates 
-//           the main menu position and this function takes "d"
-//           and uses it to display the correct screen. 
+//           the main menu position so that the UI can be on 
+//           the right menu page. 
 //////////////////////////////////////////////////////////////////
 void menuCursor(int d){
 
@@ -125,7 +126,6 @@ void menuCursor(int d){
   lcd.setCursor(5,1);
   lcd.print(" ");
   lcd.setCursor(6,0);
-
   
   if(menuMode == 0){  // If in main menu mode
     lcd.setCursor(5, d % 2);     // Set cursor to place astrick
@@ -146,7 +146,7 @@ void menuCursor(int d){
   
   else if(menuMode == 1) { // If in sub menu mode
      lcd.setCursor(5, (K-1) % 2);
-     lcd.print("*");
+     lcd.print(F("*"));
      
     if(K % 2 == 1){  // If menu option and even position number
       lcd.setCursor(6,0);
@@ -161,13 +161,11 @@ void menuCursor(int d){
       lcd.print(menuOptions[d][K]);
     }
   }
-
  
 }
 
 // Pressing up button will decrement menu counter. 
 int menuUp(int i) {
-  
     
     if(menuMode == 0){  // If in main menu 
         i -= 1;         
@@ -181,7 +179,6 @@ int menuUp(int i) {
         K = 1;    
       }
     }
-
     
     lcd.setCursor(0,1);
     lcd.print(i);
@@ -194,8 +191,6 @@ int menuDown(int i) {
     
     if(menuMode == 0){  // If in Main menu 
       i += 1;
-      Serial.print("menuMode = ");   // debug code for sub menu navigation problem 
-      Serial.print(menuMode);
       if (i == MENU_COUNT) {
         i = MENU_COUNT - 1; 
       }
@@ -215,14 +210,25 @@ int menuDown(int i) {
     return i;
 }
 
-
 int menuSel(int i){
-  menuMode = 1;
-  K += 1 ;
-  lcd.setCursor(0,1);
-  lcd.print(i);
-  menuCursor(i);  
-  return i;
+  // If in mainMenu, put in SubMenu mode (mainMenu == 1) 
+  // Increment K (position in sub menu)
+  if (menuMode == 0) {
+    menuMode = 1;
+    K += 1 ;
+    lcd.setCursor(0,1);
+    lcd.print(i);
+    menuCursor(i);  
+    return i;
+  }
+  // Else you are already in subMenu and want to trigger 
+  // an action
+  else{
+    if(Z == 1 && K == 1){
+      Serial.print(F("This is right before the dataLog code for the temp sensor"));  // Debug code
+      RTCdatalog();
+    }
+  }
 }
 
 int menuLeft(int i){

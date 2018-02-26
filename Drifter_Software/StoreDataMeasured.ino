@@ -4,22 +4,23 @@
 #include <Wire.h>
 #include "RTClib.h"
 
+
 File dataFile;
 RTC_DS1307 rtc;
 
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+char const daysOfTheWeek[7][12] PROGMEM = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 double temp_F;
 int DS18S20_Pin = 2; //DS18S20 Signal pin on digital 2
 
 //Temperature chip i/o
 OneWire ds(DS18S20_Pin);  // on digital pin 2
 
-void setup() 
+void RTCsetup() 
 {
   //The serial monitor output will only be read in 9600
   Serial.begin(9600);
   if (! rtc.begin()) {
-    Serial.println("Couldn't find RTC");
+    Serial.println(F("Couldn't find RTC"));
       while (1);
   }
   
@@ -27,15 +28,15 @@ void setup()
     ;
   }
 
-  Serial.print("Initializing SD card....");
+  Serial.print(F("Initializing SD card...."));
   if (!SD.begin(10)) {
-    Serial.println("initialization failed!");
+    Serial.println(F("initialization failed!"));
     while (1);
   }
-  Serial.println("initialization done.");
+  Serial.println(F("initialization done."));
 
   if (!rtc.isrunning()) {
-    Serial.println("RTC is NOT running!");
+    Serial.println(F("RTC is NOT running!"));
     // following line sets the RTC to the date & time this sketch was compiled
     // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     // This line sets the RTC with an explicit date & time, for example to set
@@ -44,7 +45,7 @@ void setup()
   }
 }
 
-void loop() 
+void RTCdatalog() 
 {
     dataFile = SD.open("temp.txt", FILE_WRITE);
 
@@ -55,34 +56,35 @@ void loop()
       
       Serial.print(temperature);
       dataFile.print(temperature);
-      Serial.print("°C");
-      dataFile.print("°C");
-      Serial.print(" ");
-      dataFile.print(" ");
+      Serial.print(F("°C"));
+      dataFile.print(F("°C"));
+      Serial.print(F(" "));
+      dataFile.print(F(" "));
       temp_F = ((temperature * 1.8) + 32);
       Serial.print(temp_F);
       dataFile.print(temp_F);
-      Serial.print("°F");
-      dataFile.print("°F");
+      Serial.print(F("°F"));
+      dataFile.print(F("°F"));
 
-      Serial.print("   ");
-      dataFile.print("   ");
-  
+      Serial.print(F("   "));
+      dataFile.print(F("   "));
+
+      
       Serial.print(now.year(), DEC);
-      Serial.print('/');
+      Serial.print(F("/"));
       Serial.print(now.month(), DEC);
-      Serial.print('/');
+      Serial.print(F("/"));
       Serial.print(now.day(), DEC);
-      Serial.print(" (");
+      Serial.print(F(" ("));
       Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      Serial.print(") ");
+      Serial.print(F(") "));
       Serial.print(now.hour(), DEC);
-      Serial.print(':');
+      Serial.print(F(":"));
       Serial.print(now.minute(), DEC);
-      Serial.print(':');
+      Serial.print(F(":"));
       Serial.print(now.second(), DEC);
       Serial.println();
-  
+      
       dataFile.print(now.year(), DEC);
       dataFile.print('/');
       dataFile.print(now.month(), DEC);
@@ -102,7 +104,7 @@ void loop()
     }
     else
     {
-      Serial.println("error opening temp.txt");
+      Serial.println(F("error opening temp.txt"));
     }
     delay(15000); //slow sample speed 15 seconds
 }
@@ -120,12 +122,12 @@ float getTemp(){
   }
 
   if ( OneWire::crc8( addr, 7) != addr[7]) {
-      Serial.println("CRC is not valid!");
+      Serial.println(F("CRC is not valid!"));
       return -1000;
   }
 
   if ( addr[0] != 0x10 && addr[0] != 0x28) {
-      Serial.print("Device is not recognized");
+      Serial.print(F("Device is not recognized"));
       return -1000;
   }
 
