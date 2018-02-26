@@ -73,36 +73,36 @@ void loop() {
   switch (lcd_key){               // depending on which button was pushed, we perform an action
     
        case BUTTON_RIGHT:{             //  push button "RIGHT" and show the word on the screen
-            //lcd.print("RIGHT");
+            lcd.print(F("RIGHT"));
             delay(300);
             break;
        }
        case BUTTON_LEFT:{
-             //lcd.print("LEFT "); //  push button "LEFT" and show the word on the screen
+             lcd.print(F("LEFT ")); //  push button "LEFT" and show the word on the screen
              Z = menuLeft(Z);
              delay(300);
              break;
        }    
        case BUTTON_UP:{
-             //lcd.print("UP   ");  //  push button "UP" and show the word on the screen
+             lcd.print(F("UP   "));  //  push button "UP" and show the word on the screen
              Z = menuUp(Z);
              delay(300);
              break;
        }
        case BUTTON_DOWN:{
-             //lcd.print("DOWN ");  //  push button "DOWN" and show the word on the screen
+             lcd.print(F("DOWN "));  //  push button "DOWN" and show the word on the screen
              Z = menuDown(Z);
              delay(300);
              break;      
        }
        case BUTTON_SELECT:{
-             //lcd.print("SEL  ");  //  push button "SELECT" and show the word on the screen
+             lcd.print(F("SEL  "));  //  push button "SELECT" and show the word on the screen
              Z = menuSel(Z);
              delay(300);
              break;
        }
        default :{
-           //lcd.print("NONE ");  //  No action  will show "None" on the screen
+           lcd.print(F("NONE "));  //  No action  will show "None" on the screen
            lcd.setCursor(0,1);
            lcd.print(Z);
            break;
