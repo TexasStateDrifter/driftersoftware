@@ -16,7 +16,7 @@
 #include <avr/pgmspace.h>
 #include <Adafruit_RGBLCDShield.h>
 #include <utility/Adafruit_MCP23017.h>
-
+#include <avr/sleep.h>
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
@@ -24,6 +24,7 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 // Note: Can delete this whole section if you know you want
 //       to set it to particular color. Backlight is color
 //       is initialized in "void setup()".
+#define NONE 0x0
 #define RED 0x1
 #define YELLOW 0x3
 #define GREEN 0x2
@@ -36,14 +37,13 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 #define SUBMENU_COUNT 2 // Max # of SUBMENU options for any menu option
 bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu(1). 
 
-
 // 2-dim Array of type String. If submenu option has less then max, fill in with (" ").
-String const menuOptions[MENU_COUNT][SUBMENU_COUNT+1] PROGMEM = {{"Option 0","subOpt00","subOpt01"},
-                                                   {"Sensors ","Temp    ","subOpt11"},
-                                                   {"Option 2","subOpt20","subOpt21"}, 
-                                                   {"Option 3","subOpt30","subOpt31"}, 
-                                                   {"Option 4","subOpt40","subOpt41"},
-                                                   {"Option 5","subOpt50","subOpt51"}};
+String const menuOptions[MENU_COUNT][SUBMENU_COUNT+1] PROGMEM = {{"Option 0","subOpt00  ","subOpt01  "},
+                                                                 {"Sensors ","Temp      ","subOpt11  "},
+                                                                 {"Option 2","subOpt20  ","subOpt21  "}, 
+                                                                 {"Sleep Mode","ON        ","subOpt31  "}, 
+                                                                 {"Option 4","subOpt40  ","subOpt41  "},
+                                                                 {"Backlight ","ON        ","OFF      "}};
 
 void setup() {
   // setup code sets up the 1st page of the main menu
@@ -224,9 +224,41 @@ int menuSel(int i){
   // Else you are already in subMenu and want to trigger 
   // an action
   else{
-    if(Z == 1 && K == 1){
+    if(Z == 1 && K == 1){ // If selected 1st suboption of the 1st main menu option run this.
       Serial.print(F("This is right before the dataLog code for the temp sensor"));  // Debug code
       RTCdatalog();
+      lcd.clear();
+      lcd.print(getTemp());
+    }
+    else if(Z == 1 && K == 2){
+      // Do something
+    }
+    else if(Z == 2 && K == 1){
+      // Do something
+    }
+    else if(Z == 2 && K == 2){
+      // Do something
+    }
+    else if(Z == 3 && K == 1){
+      // Do something
+      set_sleep_mode (SLEEP_MODE_PWR_DOWN);  
+      sleep_enable();
+      sleep_cpu ();  
+    }
+    else if(Z == 3 && K == 2){
+      // Do something
+    }    
+    else if(Z == 4 && K == 1){
+      lcd.display();
+    }
+    else if(Z == 4 && K ==2){
+      lcd.noDisplay();
+    }
+    else if(Z == 5 && K == 1){
+      lcd.setBacklight(GREEN); // Turn backlight ON
+    }
+    else if(Z == 5 && K == 2) {
+      lcd.setBacklight(NONE); // Turn backlight OFF
     }
   }
 }
