@@ -13,6 +13,7 @@
 * 
 ************************************************************/
 #include <Wire.h>
+//#include <LowPower.h>
 #include <avr/pgmspace.h>
 #include <Adafruit_RGBLCDShield.h>
 #include <utility/Adafruit_MCP23017.h>
@@ -39,7 +40,7 @@ bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu
 
 // 2-dim Array of type String. If submenu option has less then max, fill in with (" ").
 String const menuOptions[MENU_COUNT][SUBMENU_COUNT+1] PROGMEM = {{"Option 0","subOpt00  ","subOpt01  "},
-                                                                 {"Sensors ","Temp      ","subOpt11  "},
+                                                                 {"Sensors   ","Temp      ","subOpt11  "},
                                                                  {"Option 2","subOpt20  ","subOpt21  "}, 
                                                                  {"Sleep Mode","ON        ","subOpt31  "}, 
                                                                  {"Option 4","subOpt40  ","subOpt41  "},
@@ -73,42 +74,41 @@ void loop() {
   switch (lcd_key){               // depending on which button was pushed, we perform an action
     
        case BUTTON_RIGHT:{             //  push button "RIGHT" and show the word on the screen
-            lcd.print(F("RIGHT"));
+          //  lcd.print(F("RIGHT"));
             delay(300);
             break;
        }
        case BUTTON_LEFT:{
-             lcd.print(F("LEFT ")); //  push button "LEFT" and show the word on the screen
+           //  lcd.print(F("LEFT ")); //  push button "LEFT" and show the word on the screen
              Z = menuLeft(Z);
              delay(300);
              break;
        }    
        case BUTTON_UP:{
-             lcd.print(F("UP   "));  //  push button "UP" and show the word on the screen
+          //   lcd.print(F("UP   "));  //  push button "UP" and show the word on the screen
              Z = menuUp(Z);
              delay(300);
              break;
        }
        case BUTTON_DOWN:{
-             lcd.print(F("DOWN "));  //  push button "DOWN" and show the word on the screen
+           //  lcd.print(F("DOWN "));  //  push button "DOWN" and show the word on the screen
              Z = menuDown(Z);
              delay(300);
              break;      
        }
        case BUTTON_SELECT:{
-             lcd.print(F("SEL  "));  //  push button "SELECT" and show the word on the screen
+           //  lcd.print(F("SEL  "));  //  push button "SELECT" and show the word on the screen
              Z = menuSel(Z);
              delay(300);
              break;
        }
        default :{
-           lcd.print(F("NONE "));  //  No action  will show "None" on the screen
+          // lcd.print(F("NONE "));  //  No action  will show "None" on the screen
            lcd.setCursor(0,1);
            lcd.print(Z);
            break;
        }
   }
-
 }
 
 //////////////////////////////////////////////////////////////////
@@ -229,6 +229,9 @@ int menuSel(int i){
       RTCdatalog();
       lcd.clear();
       lcd.print(getTemp());
+      delay(5000);
+      lcd.setCursor(0,0);
+      lcd.print("        ");
     }
     else if(Z == 1 && K == 2){
       // Do something

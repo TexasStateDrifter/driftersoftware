@@ -106,7 +106,7 @@ void RTCdatalog()
     {
       Serial.println(F("error opening temp.txt"));
     }
-    delay(15000); //slow sample speed 15 seconds
+    // delay(5000); //slow sample speed 15 seconds
 }
 
 float getTemp(){
