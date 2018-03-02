@@ -4,6 +4,7 @@
 
 File dataFile;
 RTC_DS1307 rtc;
+const float voltageDivider = 4.9;
 
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
@@ -30,7 +31,7 @@ void setup()
     // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     // This line sets the RTC with an explicit date & time, for example to set
     // Feburary 21, 2018 at 12pm you would call:
-    rtc.adjust(DateTime(2018, 2, 21, 12, 0, 0));
+    rtc.adjust(DateTime(2018, 2, 23, 16, 54, 0));
   }
 }
 
@@ -44,8 +45,15 @@ void loop()
 
       // read the input on analog pin 0:
       int sensorValue = analogRead(A0);
+      //int sensorValue2 = analogRead(A1);
       // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
-      float voltage = sensorValue * (5.0 / 1023.0);
+      float voltageRead = sensorValue * (5.0 / 1023.0);
+
+      //float voltage = sensorValue * (5.0 / 1023.0);
+      //float voltageRead2 = sensorValue2 * (5.0 / 1023.0);
+      
+      float voltage = (voltageRead * voltageDivider);
+      //float voltage2 = (voltageRead2 * voltageDivider);
       // print out the value you read:
       
       DateTime now = rtc.now();
@@ -56,7 +64,12 @@ void loop()
       Serial.print("   ");
       dataFile.print("   ");
 
-  
+//      Serial.print(voltage2);
+//      dataFile.print(voltage2);
+
+      Serial.print("   ");
+      dataFile.print("   ");
+
       Serial.print(now.year(), DEC);
       Serial.print('/');
       Serial.print(now.month(), DEC);
@@ -93,6 +106,6 @@ void loop()
     {
       Serial.println("error opening volt.txt");
     }
-    delay(15000); //slow sample speed 15 seconds
+    delay(2000); //slow sample speed 15 seconds
     // if 5 minutes 300000
 }
