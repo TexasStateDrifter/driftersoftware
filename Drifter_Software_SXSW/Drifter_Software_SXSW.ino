@@ -34,17 +34,17 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 #define VIOLET 0x5
 #define WHITE 0x7
 
-#define MENU_COUNT 6 // Number of total MENU options -- Modify the number of rows in the array
+#define MENU_COUNT 4 // Number of total MENU options -- Modify the number of rows in the array
 #define SUBMENU_COUNT 2 // Max # of SUBMENU options for any menu option
 bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu(1). 
 
 // 2-dim Array of type String. If submenu option has less then max, fill in with (" ").
-String const menuOptions[MENU_COUNT][SUBMENU_COUNT+1] PROGMEM = {{"Option 0","subOpt00  ","subOpt01  "},
-                                                                 {"Sensors   ","Temp      ","subOpt11  "},
-                                                                 {"Option 2","subOpt20  ","subOpt21  "}, 
-                                                                 {"Sleep Mode","ON        ","subOpt31  "}, 
-                                                                 {"Option 4","subOpt40  ","subOpt41  "},
-                                                                 {"Backlight ","ON        ","OFF      "}};
+String const menuOptions[MENU_COUNT][SUBMENU_COUNT+1] PROGMEM = {{"Sample Now","subOpt00  ","subOpt01  "},
+                                                                 {"Sensors   ","Temp      ","Conductive"},
+                                                                 {"Backlight ","ON        ","OFF       "}, 
+                                                                 {"          ","          ","          "}}; 
+                                                                // {"Option 4  ","subOpt40  ","subOpt41  "}
+                                                                // {"Backlight ","ON        ","OFF      "}};
 
 void setup() {
   // setup code sets up the 1st page of the main menu
@@ -238,10 +238,13 @@ int menuSel(int i){
     }
     else if(Z == 2 && K == 1){
       // Do something
+      lcd.setBacklight(GREEN); // Turn backlight ON
     }
     else if(Z == 2 && K == 2){
       // Do something
+      lcd.setBacklight(NONE); // Turn backlight OFF      
     }
+/*
     else if(Z == 3 && K == 1){
       // Do something
       set_sleep_mode (SLEEP_MODE_PWR_DOWN);  
@@ -251,18 +254,14 @@ int menuSel(int i){
     else if(Z == 3 && K == 2){
       // Do something
     }    
+ /*
     else if(Z == 4 && K == 1){
       lcd.display();
     }
     else if(Z == 4 && K ==2){
       lcd.noDisplay();
     }
-    else if(Z == 5 && K == 1){
-      lcd.setBacklight(GREEN); // Turn backlight ON
-    }
-    else if(Z == 5 && K == 2) {
-      lcd.setBacklight(NONE); // Turn backlight OFF
-    }
+*/
   }
 }
 
