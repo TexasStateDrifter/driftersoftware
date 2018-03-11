@@ -33,7 +33,7 @@ bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu
 
 // 2-dim Array of type String. If submenu option has less then max, fill in with (" ").
 String const menuOptions[MENU_COUNT+1][SUBMENU_COUNT+1] PROGMEM = {{"Sample Now","subOpt00  ","subOpt01  ","          "},
-                                                                   {"Sensors   ","Temp      ","Conductive","D.O.      "},
+                                                                   {"Sensors   ","Temp      ","pH        ","D.O.      "},
                                                                    {"Backlight ","ON        ","OFF       ","          "},
                                                                    {"          ","          ","          ","          "}};
                                                                 // {"Option 4  ","subOpt40  ","subOpt41  "}
@@ -42,6 +42,7 @@ String const menuOptions[MENU_COUNT+1][SUBMENU_COUNT+1] PROGMEM = {{"Sample Now"
 void setup() {
   // setup code sets up the 1st page of the main menu
 //  RTCsetup();
+  funcSetup();
   lcd.begin(16, 2);
   lcd.setCursor(5, 0);
   lcd.print("*");
@@ -242,7 +243,7 @@ int menuDown(int i) {
 
 int menuSel(int i){
   Serial.print("Z = ");
-  Serial.print(Z);
+  Serial.print(i);
   Serial.print(" K = ");
   Serial.print(K);
   
@@ -253,7 +254,7 @@ int menuSel(int i){
     menuMode = 1;
     K += 1 ;
     lcd.setCursor(0,0);
-    lcd.print(Z);
+    lcd.print(i);
     lcd.setCursor(0,1);
     lcd.print(K);
     menuCursor(i);  
@@ -285,10 +286,30 @@ int menuSel(int i){
   else{
     if(Z == 1 and K == 1){ // If selected 1st suboption of the 1st main menu option run this.
       Serial.print(F("This is right before the dataLog code for the temp sensor"));  // Debug code
-      
+      lcd.clear();
+      lcd.print("Temp:");
+      lcd.print(getTemp());
+      delay(3000);
+      lcd.print(menuOptions[0][0]);
+      lcd.setCursor(6,1);
+      lcd.print(menuOptions[1][0]);
     }
     else if(Z == 1 && K == 2){
       // Do something
+      lcd.print("pH:");
+      lcd.print(getPH());
+      delay(3000);
+      lcd.print(menuOptions[0][0]);
+      lcd.setCursor(6,1);
+      lcd.print(menuOptions[1][0]);
+    }
+    else if(Z == 1 and K == 3){
+      lcd.print("D.O:");
+      lcd.print(getPH());
+      delay(3000);
+      lcd.print(menuOptions[0][0]);
+      lcd.setCursor(6,1);
+      lcd.print(menuOptions[1][0]);
     }
     else if(Z == 2 && K == 1){
       // Do something
