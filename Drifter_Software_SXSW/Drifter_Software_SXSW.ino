@@ -81,49 +81,49 @@ void loop() {
        case BUTTON_LEFT:{
            //  lcd.print(F("LEFT ")); //  push button "LEFT" and show the word on the screen
              Z = menuLeft(Z);
-             lcd.setCursor(0,0);
-             lcd.print(Z);
-             lcd.setCursor(0,1);
-             lcd.print(K);
+//             lcd.setCursor(0,0);
+//             lcd.print(Z);
+//             lcd.setCursor(0,1);
+//             lcd.print(K);
              delay(300);
              break;
        }    
        case BUTTON_UP:{
           //   lcd.print(F("UP   "));  //  push button "UP" and show the word on the screen
              Z = menuUp(Z);
-             lcd.setCursor(0,0);
-             lcd.print(Z);
-             lcd.setCursor(0,1);
-             lcd.print(K);
+//             lcd.setCursor(0,0);
+//             lcd.print(Z);
+//             lcd.setCursor(0,1);
+//             lcd.print(K);
              delay(300);
              break;
        }
        case BUTTON_DOWN:{
            //  lcd.print(F("DOWN "));  //  push button "DOWN" and show the word on the screen
              Z = menuDown(Z);
-             lcd.setCursor(0,0);
-             lcd.print(Z);
-             lcd.setCursor(0,1);
-             lcd.print(K);
+//             lcd.setCursor(0,0);
+//             lcd.print(Z);
+//             lcd.setCursor(0,1);
+//             lcd.print(K);
              delay(300);
              break;      
        }
        case BUTTON_SELECT:{
            //  lcd.print(F("SEL  "));  //  push button "SELECT" and show the word on the screen
              Z = menuSel(Z);
-             lcd.setCursor(0,0);
-             lcd.print(Z);
-             lcd.setCursor(0,1);
-             lcd.print(K);
+//             lcd.setCursor(0,0);
+//             lcd.print(Z);
+//             lcd.setCursor(0,1);
+//             lcd.print(K);
              delay(300);
              break;
        }
        default :{
           // lcd.print(F("NONE "));  //  No action  will show "None" on the screen
-          lcd.setCursor(0,0);
-          lcd.print(Z);
-          lcd.setCursor(0,1);
-          lcd.print(K);
+//          lcd.setCursor(0,0);
+//          lcd.print(Z);
+//          lcd.setCursor(0,1);
+//          lcd.print(K);
            break;
        }
   }
@@ -210,10 +210,10 @@ int menuUp(int i) {
       }
     }
     
-    lcd.setCursor(0,0);
-    lcd.print(i);
-    lcd.setCursor(0,1);
-    lcd.print(K);
+//    lcd.setCursor(0,0);
+//    lcd.print(i);
+//    lcd.setCursor(0,1);
+//    lcd.print(K);
     menuCursor(i);
     return i;
 }
@@ -238,10 +238,10 @@ int menuDown(int i) {
         K += 1;
       }
     }
-    lcd.setCursor(0,0);
-    lcd.print(i);
-    lcd.setCursor(0,1);
-    lcd.print(K);
+//    lcd.setCursor(0,0);
+//    lcd.print(i);
+//    lcd.setCursor(0,1);
+//    lcd.print(K);
     menuCursor(i);
     return i;
 }
@@ -258,10 +258,10 @@ int menuSel(int i){
     Serial.print(F("Entering submenu mode"));
     menuMode = 1;
     K += 1 ;
-    lcd.setCursor(0,0);
-    lcd.print(i);
-    lcd.setCursor(0,1);
-    lcd.print(K);
+//    lcd.setCursor(0,0);
+//    lcd.print(i);
+//    lcd.setCursor(0,1);
+//    lcd.print(K);
     menuCursor(i);  
     return i;
   }
@@ -296,6 +296,9 @@ int menuSel(int i){
       lcd.print(getTemp());
       delay(3000);
       lcd.setCursor(0,0);
+      lcd.print(F("        "));
+      lcd.setCursor(5, 0);
+      lcd.print("*");
       lcd.print(menuOptions[0][0]);
       lcd.setCursor(6,1);
       lcd.print(menuOptions[1][0]);
@@ -307,6 +310,9 @@ int menuSel(int i){
       lcd.print(getPH());
       delay(3000);
       lcd.setCursor(0,0);
+      lcd.print(F("        "));
+      lcd.setCursor(5, 0);
+      lcd.print("*");
       lcd.print(menuOptions[0][0]);
       lcd.setCursor(6,1);
       lcd.print(menuOptions[1][0]);
@@ -314,9 +320,12 @@ int menuSel(int i){
     else if(Z == 1 and K == 3){
       lcd.clear();
       lcd.print("D.O:");
-      lcd.print(getPH());
+      lcd.print(getDO());
       delay(3000);
       lcd.setCursor(0,0);
+      lcd.print(F("        "));
+      lcd.setCursor(5, 0);
+      lcd.print("*");
       lcd.print(menuOptions[0][0]);
       lcd.setCursor(6,1);
       lcd.print(menuOptions[1][0]);
@@ -355,10 +364,10 @@ int menuLeft(int i){
   menuMode = 0;
   K = 0 ;
   i = 0 ;
-  lcd.setCursor(0,0);
-  lcd.print(i);
-  lcd.setCursor(0,1);
-  lcd.print(K);
+//  lcd.setCursor(0,0);
+//  lcd.print(i);
+//  lcd.setCursor(0,1);
+//  lcd.print(K);
   menuCursor(i);
   return(i);
 }
