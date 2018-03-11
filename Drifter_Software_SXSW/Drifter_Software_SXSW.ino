@@ -25,24 +25,24 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 // Note: Can delete this whole section if you know you want
 //       to set it to particular color. Backlight is color
 //       is initialized in "void setup()".
-#define NONE 0x0
-#define RED 0x1
-#define YELLOW 0x3
-#define GREEN 0x2
-#define TEAL 0x6
-#define BLUE 0x4
-#define VIOLET 0x5
-#define WHITE 0x7
+#define NONE    0x0
+#define RED     0x1
+#define YELLOW  0x3
+#define GREEN   0x2
+#define TEAL    0x6
+#define BLUE    0x4
+#define VIOLET  0x5
+#define WHITE   0x7
 
-#define MENU_COUNT 4 // Number of total MENU options -- Modify the number of rows in the array
-#define SUBMENU_COUNT 2 // Max # of SUBMENU options for any menu option
+#define MENU_COUNT 3 // Number of total MENU options -- Modify the number of rows in the array
+#define SUBMENU_COUNT 3 // Max # of SUBMENU options for any menu option
 bool menuMode = 0; // bool var to determine if it's in main menu (0) or sub menu(1). 
 
 // 2-dim Array of type String. If submenu option has less then max, fill in with (" ").
-String const menuOptions[MENU_COUNT][SUBMENU_COUNT+1] PROGMEM = {{"Sample Now","subOpt00  ","subOpt01  "},
-                                                                 {"Sensors   ","Temp      ","Conductive"},
-                                                                 {"Backlight ","ON        ","OFF       "}, 
-                                                                 {"          ","          ","          "}}; 
+String const menuOptions[MENU_COUNT+1][SUBMENU_COUNT+1] PROGMEM = {{"Sample Now","subOpt00  ","subOpt01  ","          "},
+                                                                   {"Sensors   ","Temp      ","Conductive","D.O.      "},
+                                                                   {"Backlight ","ON        ","OFF       ","          "},
+                                                                   {"          ","          ","          ","          "}};
                                                                 // {"Option 4  ","subOpt40  ","subOpt41  "}
                                                                 // {"Backlight ","ON        ","OFF      "}};
 
@@ -104,8 +104,10 @@ void loop() {
        }
        default :{
           // lcd.print(F("NONE "));  //  No action  will show "None" on the screen
-           lcd.setCursor(0,1);
-           lcd.print(Z);
+          lcd.setCursor(0,0);
+          lcd.print(Z);
+          lcd.setCursor(0,1);
+          lcd.print(K);
            break;
        }
   }
@@ -131,7 +133,7 @@ void menuCursor(int d){
     lcd.setCursor(5, d % 2);     // Set cursor to place astrick
     lcd.print(F("*"));
     lcd.setCursor(6,0);
-   
+
     if(d <= MENU_COUNT and d % 2 == 1){  // If menu option and odd position number
      lcd.print(menuOptions[d-1][0]);
      lcd.setCursor(6,1);
@@ -148,17 +150,29 @@ void menuCursor(int d){
      lcd.setCursor(5, (K-1) % 2);
      lcd.print(F("*"));
      
-    if(K % 2 == 1){  // If menu option and even position number
+    if(K % 2 == 1){  // If sub option and even position number
       lcd.setCursor(6,0);
       lcd.print(menuOptions[d][K]);
-      lcd.setCursor(6,1);
-      lcd.print(menuOptions[d][K+1]);
+      if(menuOptions[d][K] == "D.O.      "){     ////     started fucking with code here!
+        lcd.setCursor(6,1);
+        lcd.print("          ");
+      }
+      else{
+        lcd.setCursor(6,1);
+        lcd.print(menuOptions[d][K+1]);
+      }
     }
     else if(K % 2 == 0){  // If sub option and odd position number
       lcd.setCursor(6,0);
       lcd.print(menuOptions[d][K-1]);
-      lcd.setCursor(6,1);
-      lcd.print(menuOptions[d][K]);
+      if(menuOptions[d][K] == "D.O.      "){    // also fucked with this code here!
+        lcd.setCursor(6,1);
+        lcd.print("          ");
+      }
+      else{
+        lcd.setCursor(6,1);
+        lcd.print(menuOptions[d][K]);
+      }
     }
   }
  
@@ -180,8 +194,10 @@ int menuUp(int i) {
       }
     }
     
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     lcd.print(i);
+    lcd.setCursor(0,1);
+    lcd.print(K);
     menuCursor(i);
     return i;
 }
@@ -195,17 +211,21 @@ int menuDown(int i) {
         i = MENU_COUNT - 1; 
       }
     }
-    else if(menuMode == 1){ // If in Sub menu
-      K += 1;
+    else if(menuMode == 1){ // If in Sub menu and K is equal to last Submenu option
       if(K == SUBMENU_COUNT){
-        K = SUBMENU_COUNT ;
+        K = SUBMENU_COUNT ;  // Set equal to Submenu count (Doesn't allow K to be higher than SubMenu_Count
       }
-      else{  
-        K -= 1;
+    else if(menuOptions[Z][K+1] == "          "){
+        K = K; 
+    }
+    else{  
+        K += 1;
       }
     }
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     lcd.print(i);
+    lcd.setCursor(0,1);
+    lcd.print(K);
     menuCursor(i);
     return i;
 }
@@ -216,8 +236,10 @@ int menuSel(int i){
   if (menuMode == 0) {
     menuMode = 1;
     K += 1 ;
-    lcd.setCursor(0,1);
+    lcd.setCursor(0,0);
     lcd.print(i);
+    lcd.setCursor(0,1);
+    lcd.print(K);
     menuCursor(i);  
     return i;
   }
@@ -269,8 +291,10 @@ int menuLeft(int i){
   menuMode = 0;
   K = 0 ;
   i = 0 ;
-  lcd.setCursor(0,1);
+  lcd.setCursor(0,0);
   lcd.print(i);
+  lcd.setCursor(0,1);
+  lcd.print(K);
   menuCursor(i);
   return(i);
 }
