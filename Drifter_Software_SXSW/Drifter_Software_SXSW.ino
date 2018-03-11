@@ -241,9 +241,14 @@ int menuDown(int i) {
 }
 
 int menuSel(int i){
+  Serial.print("Z = ");
+  Serial.print(Z);
+  Serial.print(" K = ");
+  Serial.print(K);
+  
   // If in mainMenu, put in SubMenu mode (mainMenu == 1) 
   // Increment K (position in sub menu)
-  if (menuMode = 0 and Z >= 1) {
+  if (menuMode == 0 and Z >= 1) {
     Serial.print(F("Entering submenu mode"));
     menuMode = 1;
     K += 1 ;
@@ -256,7 +261,7 @@ int menuSel(int i){
   }
   // Else you are already in subMenu and want to trigger 
   // an action
-  else if(menuMode == 0 and Z == 0){
+  else if(menuMode == 0 and Z == 0){      
       lcd.clear();
       lcd.print("Temp:");
       lcd.print(getTemp());
@@ -264,6 +269,10 @@ int menuSel(int i){
       lcd.clear();
       lcd.print("D.O.:");
       lcd.print(getDO());
+      delay(3000);
+      lcd.clear();
+      lcd.print("pH:");
+      lcd.print(getPH());
       delay(3000);
       lcd.setCursor(0,0);
       lcd.print(F("        "));
