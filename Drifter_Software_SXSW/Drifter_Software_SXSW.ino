@@ -290,23 +290,28 @@ int menuSel(int i){
       lcd.print("Temp:");
       lcd.print(getTemp());
       delay(3000);
+      lcd.setCursor(0,0);
       lcd.print(menuOptions[0][0]);
       lcd.setCursor(6,1);
       lcd.print(menuOptions[1][0]);
     }
     else if(Z == 1 && K == 2){
       // Do something
+      lcd.clear();
       lcd.print("pH:");
       lcd.print(getPH());
       delay(3000);
+      lcd.setCursor(0,0);
       lcd.print(menuOptions[0][0]);
       lcd.setCursor(6,1);
       lcd.print(menuOptions[1][0]);
     }
     else if(Z == 1 and K == 3){
+      lcd.clear();
       lcd.print("D.O:");
       lcd.print(getPH());
       delay(3000);
+      lcd.setCursor(0,0);
       lcd.print(menuOptions[0][0]);
       lcd.setCursor(6,1);
       lcd.print(menuOptions[1][0]);
