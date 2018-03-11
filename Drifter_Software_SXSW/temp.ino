@@ -1,5 +1,5 @@
 #include <OneWire.h>
-
+//#include <Wire.h>
 
 int DS18S20_Pin = 2; //DS18S20 Signal pin on digital 2
 
