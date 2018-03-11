@@ -38,42 +38,54 @@ const float SaturationValueTab[41] PROGMEM = {      //saturation dissolved oxyge
 
 float getDO()
 {
-   static unsigned long analogSampleTimepoint = millis();
-   if(millis()-analogSampleTimepoint > 30U)     //every 30 milliseconds,read the analog value from the ADC
+  /*
+  if(counter
+  {
+    pinMode(DoSensorPin,INPUT);
+    readDoCharacteristicValues(); 
+  }
+  */
+   doValue = 0;
+   Serial.print(doValue);
+   while(doValue == 0)
    {
-     analogSampleTimepoint = millis();
-     analogBuffer[analogBufferIndex] = analogRead(DoSensorPin);    //read the analog value and store into the buffer
-     analogBufferIndex++;
-     if(analogBufferIndex == SCOUNT) 
-         analogBufferIndex = 0;
+     static unsigned long analogSampleTimepoint = millis();
+     if(millis()-analogSampleTimepoint > 30U)     //every 30 milliseconds,read the analog value from the ADC
+     {
+       analogSampleTimepoint = millis();
+       analogBuffer[analogBufferIndex] = analogRead(DoSensorPin);    //read the analog value and store into the buffer
+       analogBufferIndex++;
+       if(analogBufferIndex == SCOUNT) 
+           analogBufferIndex = 0;
+     }
+     
+     static unsigned long tempSampleTimepoint = millis();
+     if(millis()-tempSampleTimepoint > 500U)  // every 500 milliseconds, read the temperature
+     {
+        tempSampleTimepoint = millis();
+        //temperature = readTemperature();  // add your temperature codes here to read the temperature, unit:^C
+     }
+     
+     static unsigned long printTimepoint = millis();
+     if(millis()-printTimepoint > 1000U)
+     {
+        printTimepoint = millis();
+        for(copyIndex=0;copyIndex<SCOUNT;copyIndex++)
+        {
+          analogBufferTemp[copyIndex]= analogBuffer[copyIndex];
+        }
+        averageVoltage = getMedianNum(analogBufferTemp,SCOUNT) * (float)VREF / 1024.0; // read the value more stable by the median filtering algorithm
+        //Serial.print(F("Temperature:"));
+        //Serial.print(temperature,1);
+        //Serial.print(F("^C"));
+        doValue = pgm_read_float_near( &SaturationValueTab[0] + (int)(SaturationDoTemperature+0.5) ) * averageVoltage / SaturationDoVoltage;  //calculate the do value, doValue = Voltage / SaturationDoVoltage * SaturationDoValue(with temperature compensation)
+        //Serial.print(F("DO Value:"));
+        //Serial.print(doValue,2);
+        //Serial.println(F("mg/L"));
+        //return doValue;
+     }
    }
-   
-   static unsigned long tempSampleTimepoint = millis();
-   if(millis()-tempSampleTimepoint > 500U)  // every 500 milliseconds, read the temperature
-   {
-      tempSampleTimepoint = millis();
-      //temperature = readTemperature();  // add your temperature codes here to read the temperature, unit:^C
-   }
-   
-   static unsigned long printTimepoint = millis();
-   if(millis()-printTimepoint > 1000U)
-   {
-      printTimepoint = millis();
-      for(copyIndex=0;copyIndex<SCOUNT;copyIndex++)
-      {
-        analogBufferTemp[copyIndex]= analogBuffer[copyIndex];
-      }
-      averageVoltage = getMedianNum(analogBufferTemp,SCOUNT) * (float)VREF / 1024.0; // read the value more stable by the median filtering algorithm
-      //Serial.print(F("Temperature:"));
-      //Serial.print(temperature,1);
-      //Serial.print(F("^C"));
-      doValue = pgm_read_float_near( &SaturationValueTab[0] + (int)(SaturationDoTemperature+0.5) ) * averageVoltage / SaturationDoVoltage;  //calculate the do value, doValue = Voltage / SaturationDoVoltage * SaturationDoValue(with temperature compensation)
-      //Serial.print(F("DO Value:"));
-      //Serial.print(doValue,2);
-      //Serial.println(F("mg/L"));
-      return doValue;
-   }
- 
+   return doValue;
 }
 
 boolean serialDataAvailable(void)

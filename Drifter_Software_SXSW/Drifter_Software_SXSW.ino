@@ -18,6 +18,8 @@
 #include <Adafruit_RGBLCDShield.h>
 #include <utility/Adafruit_MCP23017.h>
 
+#define DoSensorPin  A1
+
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 // These #define make it easy to set the backlight color.
@@ -42,7 +44,7 @@ String const menuOptions[MENU_COUNT+1][SUBMENU_COUNT+1] PROGMEM = {{"Sample Now"
 void setup() {
   // setup code sets up the 1st page of the main menu
 //  RTCsetup();
-  funcSetup();
+//  funcSetup();
   lcd.begin(16, 2);
   lcd.setCursor(5, 0);
   lcd.print("*");
@@ -52,6 +54,9 @@ void setup() {
   Serial.begin(9600);
   menuMode = 0;
   lcd.setBacklight(GREEN);
+  
+  pinMode(DoSensorPin,INPUT);
+  readDoCharacteristicValues();
 }
 
 // Menu Counter, Z, Gives you the position in the main menu
