@@ -17,7 +17,6 @@
 #include <avr/pgmspace.h>
 #include <Adafruit_RGBLCDShield.h>
 #include <utility/Adafruit_MCP23017.h>
-#include <avr/sleep.h>
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
@@ -26,13 +25,7 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 //       to set it to particular color. Backlight is color
 //       is initialized in "void setup()".
 #define NONE    0x0
-#define RED     0x1
-#define YELLOW  0x3
 #define GREEN   0x2
-#define TEAL    0x6
-#define BLUE    0x4
-#define VIOLET  0x5
-#define WHITE   0x7
 
 #define MENU_COUNT 3 // Number of total MENU options -- Modify the number of rows in the array
 #define SUBMENU_COUNT 3 // Max # of SUBMENU options for any menu option
@@ -48,6 +41,7 @@ String const menuOptions[MENU_COUNT+1][SUBMENU_COUNT+1] PROGMEM = {{"Sample Now"
 
 void setup() {
   // setup code sets up the 1st page of the main menu
+//  RTCsetup();
   lcd.begin(16, 2);
   lcd.setCursor(5, 0);
   lcd.print("*");
@@ -81,24 +75,40 @@ void loop() {
        case BUTTON_LEFT:{
            //  lcd.print(F("LEFT ")); //  push button "LEFT" and show the word on the screen
              Z = menuLeft(Z);
+             lcd.setCursor(0,0);
+             lcd.print(Z);
+             lcd.setCursor(0,1);
+             lcd.print(K);
              delay(300);
              break;
        }    
        case BUTTON_UP:{
           //   lcd.print(F("UP   "));  //  push button "UP" and show the word on the screen
              Z = menuUp(Z);
+             lcd.setCursor(0,0);
+             lcd.print(Z);
+             lcd.setCursor(0,1);
+             lcd.print(K);
              delay(300);
              break;
        }
        case BUTTON_DOWN:{
            //  lcd.print(F("DOWN "));  //  push button "DOWN" and show the word on the screen
              Z = menuDown(Z);
+             lcd.setCursor(0,0);
+             lcd.print(Z);
+             lcd.setCursor(0,1);
+             lcd.print(K);
              delay(300);
              break;      
        }
        case BUTTON_SELECT:{
            //  lcd.print(F("SEL  "));  //  push button "SELECT" and show the word on the screen
              Z = menuSel(Z);
+             lcd.setCursor(0,0);
+             lcd.print(Z);
+             lcd.setCursor(0,1);
+             lcd.print(K);
              delay(300);
              break;
        }
@@ -155,7 +165,7 @@ void menuCursor(int d){
       lcd.print(menuOptions[d][K]);
       if(menuOptions[d][K] == "D.O.      "){     ////     started fucking with code here!
         lcd.setCursor(6,1);
-        lcd.print("          ");
+        lcd.print(F("          "));
       }
       else{
         lcd.setCursor(6,1);
@@ -167,7 +177,7 @@ void menuCursor(int d){
       lcd.print(menuOptions[d][K-1]);
       if(menuOptions[d][K] == "D.O.      "){    // also fucked with this code here!
         lcd.setCursor(6,1);
-        lcd.print("          ");
+        lcd.print(F("          "));
       }
       else{
         lcd.setCursor(6,1);
@@ -233,11 +243,12 @@ int menuDown(int i) {
 int menuSel(int i){
   // If in mainMenu, put in SubMenu mode (mainMenu == 1) 
   // Increment K (position in sub menu)
-  if (menuMode == 0) {
+  if (menuMode = 0 and Z >= 1) {
+    Serial.print(F("Entering submenu mode"));
     menuMode = 1;
     K += 1 ;
     lcd.setCursor(0,0);
-    lcd.print(i);
+    lcd.print(Z);
     lcd.setCursor(0,1);
     lcd.print(K);
     menuCursor(i);  
@@ -245,15 +256,27 @@ int menuSel(int i){
   }
   // Else you are already in subMenu and want to trigger 
   // an action
-  else{
-    if(Z == 1 && K == 1){ // If selected 1st suboption of the 1st main menu option run this.
-      Serial.print(F("This is right before the dataLog code for the temp sensor"));  // Debug code
-      RTCdatalog();
+  else if(menuMode == 0 and Z == 0){
       lcd.clear();
+      lcd.print("Temp:");
       lcd.print(getTemp());
-      delay(5000);
+      delay(3000);
+      lcd.clear();
+      lcd.print("D.O.:");
+      lcd.print(getDO());
+      delay(3000);
       lcd.setCursor(0,0);
-      lcd.print("        ");
+      lcd.print(F("        "));
+      lcd.setCursor(5, 0);
+      lcd.print("*");
+      lcd.print(menuOptions[0][0]);
+      lcd.setCursor(6,1);
+      lcd.print(menuOptions[1][0]);
+  }
+  else{
+    if(Z == 1 and K == 1){ // If selected 1st suboption of the 1st main menu option run this.
+      Serial.print(F("This is right before the dataLog code for the temp sensor"));  // Debug code
+      
     }
     else if(Z == 1 && K == 2){
       // Do something
@@ -285,6 +308,7 @@ int menuSel(int i){
     }
 */
   }
+  return i;
 }
 
 int menuLeft(int i){
