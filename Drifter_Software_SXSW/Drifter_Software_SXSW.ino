@@ -65,7 +65,7 @@ const float SaturationValueTab[41] PROGMEM = {      //saturation dissolved oxyge
 #include <Adafruit_RGBLCDShield.h>
 #include <utility/Adafruit_MCP23017.h>
 
-//#define DoSensorPin  A1
+#define DoSensorPin  A1
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
