@@ -13,8 +13,7 @@ boolean input_string_complete = false;                //have we received all the
 boolean sensor_string_complete = false;               //have we received all the data from the Atlas Scientific product
 
 
-void setup() {                                        //set up the hardware
-  Serial.begin(9600);                                 //set baud rate for the hardware serial port_0 to 9600
+void ECsetup() {                                      //set up the hardware
   Serial3.begin(9600);                                //set baud rate for software serial port_3 to 9600
   inputstring.reserve(10);                            //set aside some bytes for receiving data from the PC
   sensorstring.reserve(30);                           //set aside some bytes for receiving data from Atlas Scientific product
@@ -33,7 +32,7 @@ void serialEvent3() {                                 //if the hardware serial p
 }
 
 
-void loop() {                                         //here we go...
+void ECloop() {                                         //here we go...
 
 
   if (input_string_complete == true) {                //if a string from the PC has been received in its entirety
@@ -49,7 +48,7 @@ void loop() {                                         //here we go...
     }
     else                                              //if the first character in the string is NOT a digit
     {
-      print_EC_data();                                //then call this function
+      EC_data();                                //then call this function
     }
     sensorstring = "";                                //clear the string
     sensor_string_complete = false;                   //reset the flag used to tell if we have received a completed string from the Atlas Scientific product
@@ -57,7 +56,7 @@ void loop() {                                         //here we go...
 }
 
 
-void print_EC_data(void) {                            //this function will pars the string
+char EC_data() {                            //this function will pars the string
 
   char sensorstring_array[30];                        //we make a char array
   char *EC;                                           //char pointer used in string parsing
@@ -67,23 +66,8 @@ void print_EC_data(void) {                            //this function will pars 
   float f_ec;                                         //used to hold a floating point number that is the EC
 
   sensorstring.toCharArray(sensorstring_array, 30);   //convert the string to a char array
-  EC = strtok(sensorstring_array, ",");               //let's pars the array at each comma
-  TDS = strtok(NULL, ",");                            //let's pars the array at each comma
-  SAL = strtok(NULL, ",");                            //let's pars the array at each comma
-  GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
-
-  Serial.print("EC:");                                //we now print each value we parsed separately
-  Serial.println(EC);                                 //this is the EC value
-
-  Serial.print("TDS:");                               //we now print each value we parsed separately
-  Serial.println(TDS);                                //this is the TDS value
-
-  Serial.print("SAL:");                               //we now print each value we parsed separately
-  Serial.println(SAL);                                //this is the salinity value
-
-  Serial.print("GRAV:");                              //we now print each value we parsed separately
-  Serial.println(GRAV);                               //this is the specific gravity
-  Serial.println();                                   //this just makes the output easer to read
+  
+  return *sensorstring_array;
 
 //f_ec= atof(EC);                                     //uncomment this line to convert the char to a float
 }

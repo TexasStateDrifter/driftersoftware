@@ -51,6 +51,7 @@ void setup() {
 // setup code sets up the 1st page of the main menu
 //  RTCsetup();
 //  funcSetup();
+  ECsetup();
   lcd.begin(16, 2);
   lcd.setCursor(5, 0);
   lcd.print("*");
@@ -63,6 +64,7 @@ void setup() {
   pinMode(DoSensorPin,INPUT);
   readDoCharacteristicValues();
 }
+
 // Menu Counter, Z, Gives you the position in the main menu
 // you are on. subMenu Counter, K, gives you the position in
 // the subMenu you are on.

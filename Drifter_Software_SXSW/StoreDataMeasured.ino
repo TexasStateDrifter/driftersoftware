@@ -8,6 +8,7 @@
 File dataFileTemp;
 File dataFilePH;
 File dataFileDO;
+File dataFileCond;
 RTC_DS1307 rtc;
 
 char const daysOfTheWeek[7][12] PROGMEM = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -218,46 +219,39 @@ void DatalogDO()
     }
 }
 
-/*
+
 void DatalogCond() 
 {
     dataFileCond = SD.open("cond.txt", FILE_WRITE);
 
+    char *EC;                         //char pointer used in string parsing
+    char *TDS;                        //char pointer used in string parsing
+    char *SAL;                        //char pointer used in string parsing
+    char *GRAV;                       //char pointer used in string parsing
+    
     if(dataFileCond)
     {
-      float Cond = getCond();
+      char ecDataString[30] = {EC_data()};
       DateTime now = rtc.now();
       
-      Serial.print(temperature);
-      dataFileCond.print(temperature);
-      Serial.print(F("°C"));
-      dataFileCond.print(F("°C"));
-      Serial.print(F(" "));
-      dataFileCond.print(F(" "));
-      temp_F = ((temperature * 1.8) + 32);
-      Serial.print(temp_F);
-      dataFileCond.print(temp_F);
-      Serial.print(F("°F"));
-      dataFileCond.print(F("°F"));
+      // Now parse the ecDataString to initialize EC, TDS, SAL, and GRAV variables. 
+      EC = strtok(ecDataString, ",");               //let's pars the array at each comma
+      TDS = strtok(NULL, ",");                            //let's pars the array at each comma
+      SAL = strtok(NULL, ",");                            //let's pars the array at each comma
+      GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
 
-      Serial.print(F("   "));
-      dataFileCond.print(F("   "));
+      Serial.print("EC:");                                //we now print each value we parsed separately
+      Serial.println(EC);                                 //this is the EC value
 
-      
-      Serial.print(now.year(), DEC);
-      Serial.print(F("/"));
-      Serial.print(now.month(), DEC);
-      Serial.print(F("/"));
-      Serial.print(now.day(), DEC);
-      Serial.print(F(" ("));
-      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      Serial.print(F(") "));
-      Serial.print(now.hour(), DEC);
-      Serial.print(F(":"));
-      Serial.print(now.minute(), DEC);
-      Serial.print(F(":"));
-      Serial.print(now.second(), DEC);
-      Serial.println();
+      Serial.print("TDS:");                               //we now print each value we parsed separately
+      Serial.println(TDS);                                //this is the TDS value
+
+      Serial.print("SAL:");                               //we now print each value we parsed separately
+      Serial.println(SAL);                                //this is the salinity value
+
+      Serial.print("GRAV:");                              //we now print each value we parsed separately
+      Serial.println(GRAV);                               //this is the specific gravity
+      Serial.println();                                   //this just makes the output easer to read
       
       dataFileCond.print(now.year(), DEC);
       dataFileCond.print('/');
@@ -281,4 +275,4 @@ void DatalogCond()
       Serial.println(F("error opening cond.txt"));
     }
 }
-*/
+
