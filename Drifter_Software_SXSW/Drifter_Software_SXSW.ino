@@ -327,7 +327,6 @@ int menuSel(int i){
       lcd.setCursor(6,1);
       lcd.print(menuOptions[1][0]);
     }
-    else if(Z == 
     else if(Z == 6 && K == 1){ //backlight menu option 6
       // Do something
       lcd.setBacklight(GREEN); // Turn backlight ON
