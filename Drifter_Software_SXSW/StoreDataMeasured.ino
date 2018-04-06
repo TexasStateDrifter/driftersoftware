@@ -234,22 +234,6 @@ void DatalogCond()
       char ecDataString[30] = {EC_data()};
       DateTime now = rtc.now();
       
-      Serial.print(temperature);
-      dataFileCond.print(temperature);
-      Serial.print(F("°C"));
-      dataFileCond.print(F("°C"));
-      Serial.print(F(" "));
-      dataFileCond.print(F(" "));
-      temp_F = ((temperature * 1.8) + 32);
-      Serial.print(temp_F);
-      dataFileCond.print(temp_F);
-      Serial.print(F("°F"));
-      dataFileCond.print(F("°F"));
-
-      Serial.print(F("   "));
-      dataFileCond.print(F("   "));
-
-      
       // Now parse the ecDataString to initialize EC, TDS, SAL, and GRAV variables. 
       EC = strtok(ecDataString, ",");               //let's pars the array at each comma
       TDS = strtok(NULL, ",");                            //let's pars the array at each comma
@@ -268,7 +252,6 @@ void DatalogCond()
       Serial.print("GRAV:");                              //we now print each value we parsed separately
       Serial.println(GRAV);                               //this is the specific gravity
       Serial.println();                                   //this just makes the output easer to read
-
       
       dataFileCond.print(now.year(), DEC);
       dataFileCond.print('/');
