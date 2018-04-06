@@ -28,7 +28,7 @@ void RTCsetup()
   }
 
   Serial.print(F("Initializing SD card...."));
-  if (!SD.begin(10)) {
+  if (!SD.begin(10, 11, 12, 13)) {
     Serial.println(F("initialization failed!"));
     while (1);
   }
@@ -242,15 +242,23 @@ void DatalogCond()
 
       Serial.print("EC:");                                //we now print each value we parsed separately
       Serial.println(EC);                                 //this is the EC value
-
+      dataFileCond.print("EC:");
+      dataFileCond.println(EC);
+      
       Serial.print("TDS:");                               //we now print each value we parsed separately
       Serial.println(TDS);                                //this is the TDS value
+      dataFileCond.print("TDS:");
+      dataFileCond.println(TDS);
 
       Serial.print("SAL:");                               //we now print each value we parsed separately
       Serial.println(SAL);                                //this is the salinity value
+      dataFileCond.print("SAL:");
+      dataFileCond.println(SAL);
 
       Serial.print("GRAV:");                              //we now print each value we parsed separately
       Serial.println(GRAV);                               //this is the specific gravity
+      dataFileCond.print("GRAV:");
+      dataFileCond.println(GRAV);
       Serial.println();                                   //this just makes the output easer to read
       
       dataFileCond.print(now.year(), DEC);

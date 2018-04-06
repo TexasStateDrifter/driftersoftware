@@ -276,7 +276,23 @@ int menuSel(int i){
   else if(menuMode == 0 and Z == 0){      
    // The code below will put arduino into sleep mode
    // in which it will be waken up by an external inturrupt
-   
+      lcd.clear();
+      lcd.setBacklight(NONE); // Turn backlight OFF   
+      lcd.noDisplay();
+      while(true){
+        
+        DatalogTemp();
+        delay(1000);
+        
+        DatalogDO();
+        delay(1000);
+
+        DatalogPH(); 
+        delay(1000);
+  
+        DatalogCond();
+        delay(10000);
+      }
   }
   else{
     if(Z == 1 and K == 1){ // If selected 1st suboption of the 1st main menu option run this.
