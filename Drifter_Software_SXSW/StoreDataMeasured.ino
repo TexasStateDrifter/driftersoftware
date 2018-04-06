@@ -233,7 +233,7 @@ void DatalogCond()
     {
       char ecDataString[30] = {EC_data()};
       DateTime now = rtc.now();
-      
+      // adsfadsfasdfasdf
       // Now parse the ecDataString to initialize EC, TDS, SAL, and GRAV variables. 
       EC = strtok(ecDataString, ",");               //let's pars the array at each comma
       TDS = strtok(NULL, ",");                            //let's pars the array at each comma
