@@ -6,7 +6,7 @@
 //This code was written in the Arduino 1.6.5 IDE
 //An Arduino MEGA was used to test this code.
 
-
+/* Commented for testing purposes
 String inputstring = "";                              //a string to hold incoming data from the PC
 String sensorstring = "";                             //a string to hold the data from the Atlas Scientific product
 boolean input_string_complete = false;                //have we received all the data from the PC

@@ -325,11 +325,12 @@ int menuSel(int i){
       lcd.setCursor(6,1);
       lcd.print(menuOptions[1][0]);
     }
-    else if(Z == 2 && K == 1){
+    else if(Z == 
+    else if(Z == 6 && K == 1){ //backlight menu option 6
       // Do something
       lcd.setBacklight(GREEN); // Turn backlight ON
     }
-    else if(Z == 2 && K == 2){
+    else if(Z == 6 && K == 2){
       // Do something
       lcd.setBacklight(NONE); // Turn backlight OFF      
     }
