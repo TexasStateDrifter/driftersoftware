@@ -4,7 +4,6 @@
 #include <Wire.h>
 #include "RTClib.h"
 
-
 File dataFileTemp;
 File dataFilePH;
 File dataFileDO;
@@ -26,7 +25,7 @@ void RTCsetup()
   while (!Serial) {
     ;
   }
-
+  
   Serial.print(F("Initializing SD card...."));
   if (!SD.begin(10, 11, 12, 13)) {
     Serial.println(F("initialization failed!"));
