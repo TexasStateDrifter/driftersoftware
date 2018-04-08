@@ -43,6 +43,10 @@ String const menuOptions[MENU_COUNT+1][SUBMENU_COUNT+1] PROGMEM = {{"Run       "
                                                                    {"Backlight ","ON        ","OFF       ","          ","          "},
                                                                    {"          ","          ","          ","          ","          "}};
 
+                                                                   
+//String const menu[MENU_COUNT] PROGMEM = {{"Run       ","Sample Now","Sensors   ","SampleFreq","Time/Date ","SleepMode ","Backlight "}
+
+
 // String const subOptions[][] PROGMEM = {{"",""},
 //                                       {"",""},
 //                                       {"",""}};
@@ -53,10 +57,10 @@ void setup() {
 //  funcSetup();
   ECsetup();
   lcd.begin(16, 2);
-  lcd.setCursor(5, 0);
+  lcd.setCursor(0, 0);
   lcd.print("*");
   lcd.print(menuOptions[0][0]);
-  lcd.setCursor(6,1);
+  lcd.setCursor(0,1);
   lcd.print(menuOptions[1][0]);
   Serial.begin(9600);
   menuMode = 0;
