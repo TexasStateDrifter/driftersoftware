@@ -27,13 +27,13 @@ void RTCsetup()
   }
   
   Serial.print(F("Initializing SD card...."));
-  if (!SD.begin(10, 11, 12, 13)) {
+  if (!SD.begin(10)) {
     Serial.println(F("initialization failed!"));
     while (1);
   }
   Serial.println(F("initialization done."));
 
-  if (!rtc.isrunning()) {
+  if (rtc.isrunning()) {
     Serial.println(F("RTC is NOT running!"));
     // following line sets the RTC to the date & time this sketch was compiled
     // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
@@ -42,6 +42,7 @@ void RTCsetup()
     rtc.adjust(DateTime(2018, 2, 12, 14, 41, 0));
   }
 }
+
 
 void DatalogTemp() 
 {
@@ -230,7 +231,56 @@ void DatalogCond()
     
     if(dataFileCond)
     {
-      char ecDataString[30] = {EC_data()};
+
+      char* arr = getEC();
+      sensorstring.toCharArray(arr, 30);   //convert the string to a char array
+      EC = strtok(arr, ",");               //let's pars the array at each comma
+      TDS = strtok(NULL, ",");                            //let's pars the array at each comma
+      SAL = strtok(NULL, ",");                            //let's pars the array at each comma
+      GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
+      
+      Serial.print("EC:");                                //we now print each value we parsed separately
+      Serial.println(EC);                                 //this is the EC value
+      dataFileCond.print("EC:");
+      dataFileCond.println(EC);
+    
+      Serial.print("TDS:");                               //we now print each value we parsed separately
+      Serial.println(TDS);                                //this is the TDS value
+      dataFileCond.print("TDS:");
+      dataFileCond.println(TDS);
+    
+      Serial.print("SAL:");                               //we now print each value we parsed separately
+      Serial.println(SAL);                                //this is the salinity value
+      dataFileCond.print("SAL:");
+      dataFileCond.println(SAL);
+    
+      Serial.print("GRAV:");                              //we now print each value we parsed separately
+      Serial.println(GRAV);                               //this is the specific gravity
+      dataFileCond.print("GRAV:");
+      dataFileCond.println(GRAV);
+      Serial.println();                                   //this just makes the output easer to read
+
+      dataFileCond.close();
+    }
+    else
+    {
+      Serial.println(F("error opening cond.txt"));
+    }
+}
+        
+
+
+      /*
+      Serial.print("EC: "); 
+      Serial.print(arr[0]);
+      Serial.print(arr[1]);
+      Serial.print(arr[2]);
+      Serial.print(arr[3]);
+      */
+      
+      
+      /*
+      //char *ecDatastring = EC_data();
       DateTime now = rtc.now();
       // adsfadsfasdfasdf
       // Now parse the ecDataString to initialize EC, TDS, SAL, and GRAV variables. 
@@ -281,5 +331,6 @@ void DatalogCond()
     {
       Serial.println(F("error opening cond.txt"));
     }
-}
+    */
+
 

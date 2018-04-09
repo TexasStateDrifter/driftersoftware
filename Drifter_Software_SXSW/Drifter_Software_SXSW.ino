@@ -49,7 +49,7 @@ String const menuOptions[MENU_COUNT+1][SUBMENU_COUNT+1] PROGMEM = {{"Run       "
 
 void setup() {
 // setup code sets up the 1st page of the main menu
-//  RTCsetup();
+  RTCsetup();
 //  funcSetup();
   ECsetup();
   lcd.begin(16, 2);
@@ -277,8 +277,8 @@ int menuSel(int i){
    // The code below will put arduino into sleep mode
    // in which it will be waken up by an external inturrupt
       lcd.clear();
-      lcd.setBacklight(NONE); // Turn backlight OFF   
-      lcd.noDisplay();
+      //lcd.setBacklight(NONE); // Turn backlight OFF   
+      //lcd.noDisplay();
       while(true){
         
         DatalogTemp();
@@ -291,7 +291,7 @@ int menuSel(int i){
         delay(1000);
   
         DatalogCond();
-        delay(10000);
+        delay(1000);
       }
   }
   else{
