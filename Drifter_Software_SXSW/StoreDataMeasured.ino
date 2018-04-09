@@ -8,9 +8,12 @@ File dataFileTemp;
 File dataFilePH;
 File dataFileDO;
 File dataFileCond;
-RTC_DS1307 rtc;
+File dataFileVolt;
+RTC_PCF8523 rtc;
 
-char const daysOfTheWeek[7][12] PROGMEM = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+const float voltageDivider = 4.9;
+
+char const daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 double temp_F;
 
 void RTCsetup() 
@@ -31,15 +34,15 @@ void RTCsetup()
     Serial.println(F("initialization failed!"));
     while (1);
   }
-  Serial.println(F("initialization done."));
+  Serial.println("initialization done.");
 
-  if (rtc.isrunning()) {
+  if (!rtc.initialized()) {
     Serial.println(F("RTC is NOT running!"));
     // following line sets the RTC to the date & time this sketch was compiled
     // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
     // This line sets the RTC with an explicit date & time, for example to set
     // Feburary 9, 2018 at 2pm you would call:
-    rtc.adjust(DateTime(2018, 2, 12, 14, 41, 0));
+    rtc.adjust(DateTime(2018, 4, 9, 14, 51, 0));
   }
 }
 
@@ -50,6 +53,9 @@ void DatalogTemp()
 
     if(dataFileTemp)
     {
+      Serial.println(F("   "));
+      dataFileTemp.println(F("   "));
+      
       float temperature = getTemp();
       DateTime now = rtc.now();
       
@@ -105,7 +111,6 @@ void DatalogTemp()
     {
       Serial.println(F("error opening temp.txt"));
     }
-    // delay(5000); //slow sample speed 15 seconds
 }
 
 
@@ -115,6 +120,9 @@ void DatalogPH()
 
     if(dataFilePH)
     {
+      Serial.println(F("   "));
+      dataFilePH.println(F("   "));
+      
       float ph = getPH();
       DateTime now = rtc.now();
       
@@ -170,6 +178,9 @@ void DatalogDO()
 
     if(dataFileDO)
     {
+      Serial.println(F("   "));
+      dataFileDO.println(F("   "));
+      
       float DO = getDO();
       DateTime now = rtc.now();
       
@@ -232,6 +243,11 @@ void DatalogCond()
     if(dataFileCond)
     {
 
+      Serial.println(F("   "));
+      dataFileCond.println(F("   "));
+
+      DateTime now = rtc.now();
+
       char* arr = getEC();
       sensorstring.toCharArray(arr, 30);   //convert the string to a char array
       EC = strtok(arr, ",");               //let's pars the array at each comma
@@ -255,60 +271,26 @@ void DatalogCond()
       dataFileCond.println(SAL);
     
       Serial.print("GRAV:");                              //we now print each value we parsed separately
-      Serial.println(GRAV);                               //this is the specific gravity
+      Serial.print(GRAV);                               //this is the specific gravity
       dataFileCond.print("GRAV:");
-      dataFileCond.println(GRAV);
-      Serial.println();                                   //this just makes the output easer to read
+      dataFileCond.print(GRAV);
+      Serial.print("   ");                                   //this just makes the output easer to read
+      dataFileCond.print("   ");
 
-      dataFileCond.close();
-    }
-    else
-    {
-      Serial.println(F("error opening cond.txt"));
-    }
-}
-        
-
-
-      /*
-      Serial.print("EC: "); 
-      Serial.print(arr[0]);
-      Serial.print(arr[1]);
-      Serial.print(arr[2]);
-      Serial.print(arr[3]);
-      */
-      
-      
-      /*
-      //char *ecDatastring = EC_data();
-      DateTime now = rtc.now();
-      // adsfadsfasdfasdf
-      // Now parse the ecDataString to initialize EC, TDS, SAL, and GRAV variables. 
-      EC = strtok(ecDataString, ",");               //let's pars the array at each comma
-      TDS = strtok(NULL, ",");                            //let's pars the array at each comma
-      SAL = strtok(NULL, ",");                            //let's pars the array at each comma
-      GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
-
-      Serial.print("EC:");                                //we now print each value we parsed separately
-      Serial.println(EC);                                 //this is the EC value
-      dataFileCond.print("EC:");
-      dataFileCond.println(EC);
-      
-      Serial.print("TDS:");                               //we now print each value we parsed separately
-      Serial.println(TDS);                                //this is the TDS value
-      dataFileCond.print("TDS:");
-      dataFileCond.println(TDS);
-
-      Serial.print("SAL:");                               //we now print each value we parsed separately
-      Serial.println(SAL);                                //this is the salinity value
-      dataFileCond.print("SAL:");
-      dataFileCond.println(SAL);
-
-      Serial.print("GRAV:");                              //we now print each value we parsed separately
-      Serial.println(GRAV);                               //this is the specific gravity
-      dataFileCond.print("GRAV:");
-      dataFileCond.println(GRAV);
-      Serial.println();                                   //this just makes the output easer to read
+      Serial.print(now.year(), DEC);
+      Serial.print(F("/"));
+      Serial.print(now.month(), DEC);
+      Serial.print(F("/"));
+      Serial.print(now.day(), DEC);
+      Serial.print(F(" ("));
+      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+      Serial.print(F(") "));
+      Serial.print(now.hour(), DEC);
+      Serial.print(F(":"));
+      Serial.print(now.minute(), DEC);
+      Serial.print(F(":"));
+      Serial.print(now.second(), DEC);
+      Serial.println();
       
       dataFileCond.print(now.year(), DEC);
       dataFileCond.print('/');
@@ -323,7 +305,7 @@ void DatalogCond()
       dataFileCond.print(now.minute(), DEC);
       dataFileCond.print(':');
       dataFileCond.print(now.second(), DEC);
-      dataFileCond.println(); 
+      dataFileCond.println();
 
       dataFileCond.close();
     }
@@ -331,6 +313,82 @@ void DatalogCond()
     {
       Serial.println(F("error opening cond.txt"));
     }
-    */
+}
+        
+void DatalogVolt()
+{
+    dataFileVolt = SD.open("volt.txt", FILE_WRITE);
+
+    if(dataFileVolt)
+    {
+      Serial.println(F("   "));
+      dataFileVolt.println(F("   "));
+
+      DateTime now = rtc.now();
+      
+      // read the input on analog pin 0:
+      int sensorValue = analogRead(A2); // Battery output
+      int sensorValue2 = analogRead(A3); // Solar output
+      
+      // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
+      float voltageRead = sensorValue * (5.0 / 1023.0);
+      float voltageRead2 = sensorValue2 * (5.0 / 1023.0);
+
+      float voltage = (voltageRead * voltageDivider);
+      float voltage2 = (voltageRead2 * voltageDivider);
+
+      Serial.print("Battery: ");
+      Serial.print(voltage);
+      dataFileVolt.print("Battery: ");
+      dataFileVolt.print(voltage);
+      
+      Serial.print("   ");
+      dataFileVolt.print("   ");
+
+      Serial.print("Solar: ");
+      Serial.print(voltage2);
+      dataFileVolt.print("Solar: ");
+      dataFileVolt.print(voltage2);
+
+      Serial.print("   ");
+      dataFileVolt.print("   ");
+      
+      Serial.print(now.year(), DEC);
+      Serial.print('/');
+      Serial.print(now.month(), DEC);
+      Serial.print('/');
+      Serial.print(now.day(), DEC);
+      Serial.print(" (");
+      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
+      Serial.print(") ");
+      Serial.print(now.hour(), DEC);
+      Serial.print(':');
+      Serial.print(now.minute(), DEC);
+      Serial.print(':');
+      Serial.print(now.second(), DEC);
+      Serial.println();
+  
+      dataFileVolt.print(now.year(), DEC);
+      dataFileVolt.print('/');
+      dataFileVolt.print(now.month(), DEC);
+      dataFileVolt.print('/');
+      dataFileVolt.print(now.day(), DEC);
+      dataFileVolt.print(" (");
+      dataFileVolt.print(daysOfTheWeek[now.dayOfTheWeek()]);
+      dataFileVolt.print(") ");
+      dataFileVolt.print(now.hour(), DEC);
+      dataFileVolt.print(':');
+      dataFileVolt.print(now.minute(), DEC);
+      dataFileVolt.print(':');
+      dataFileVolt.print(now.second(), DEC);
+      dataFileVolt.println(); 
+
+      dataFileVolt.close();
+    }
+    else
+    {
+      Serial.println(F("error opening volt.txt"));
+    }
+}
 
 

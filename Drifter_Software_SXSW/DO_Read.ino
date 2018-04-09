@@ -46,7 +46,6 @@ float getDO()
   }
   */
    doValue = 0;
-   Serial.print(doValue);
    while(doValue == 0)
    {
      static unsigned long analogSampleTimepoint = millis();

@@ -277,21 +277,24 @@ int menuSel(int i){
    // The code below will put arduino into sleep mode
    // in which it will be waken up by an external inturrupt
       lcd.clear();
-      //lcd.setBacklight(NONE); // Turn backlight OFF   
-      //lcd.noDisplay();
+      lcd.setBacklight(NONE); // Turn backlight OFF   
+      lcd.noDisplay();
       while(true){
         
         DatalogTemp();
-        delay(1000);
+        delay(10);
         
         DatalogDO();
-        delay(1000);
+        delay(10);
 
         DatalogPH(); 
-        delay(1000);
+        delay(10);
   
         DatalogCond();
-        delay(1000);
+        delay(10);
+
+        DatalogVolt();
+        delay(60000);
       }
   }
   else{
