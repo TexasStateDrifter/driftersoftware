@@ -328,14 +328,14 @@ void DatalogVolt()
       
       // read the input on analog pin 0:
       int sensorValue = analogRead(A2); // Battery output
-      int sensorValue2 = analogRead(A3); // Solar output
+      //int sensorValue2 = analogRead(A3); // Solar output
       
       // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
       float voltageRead = sensorValue * (5.0 / 1023.0);
-      float voltageRead2 = sensorValue2 * (5.0 / 1023.0);
+      //float voltageRead2 = sensorValue2 * (5.0 / 1023.0);
 
       float voltage = (voltageRead * voltageDivider);
-      float voltage2 = (voltageRead2 * voltageDivider);
+      //float voltage2 = (voltageRead2 * voltageDivider);
 
       Serial.print("Battery: ");
       Serial.print(voltage);
@@ -344,7 +344,8 @@ void DatalogVolt()
       
       Serial.print("   ");
       dataFileVolt.print("   ");
-
+      
+/*
       Serial.print("Solar: ");
       Serial.print(voltage2);
       dataFileVolt.print("Solar: ");
@@ -352,7 +353,7 @@ void DatalogVolt()
 
       Serial.print("   ");
       dataFileVolt.print("   ");
-      
+*/
       Serial.print(now.year(), DEC);
       Serial.print('/');
       Serial.print(now.month(), DEC);
