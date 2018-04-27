@@ -1,10 +1,10 @@
 #include <OneWire.h>
 #include <Wire.h>
 
-int DS18S20_Pin = 4; //DS18S20 Signal pin on digital 2
+int DS18S20_Pin = 4; //DS18S20 Signal pin on digital 4
 
 //Temperature chip i/o
-OneWire ds(DS18S20_Pin);  // on digital pin 2
+OneWire ds(DS18S20_Pin);  // on digital pin 4
 
 float getTemp(){
   //returns the temperature from one DS18S20 in DEG Celsius

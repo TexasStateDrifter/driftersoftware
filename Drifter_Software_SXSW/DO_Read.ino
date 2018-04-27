@@ -1,7 +1,7 @@
 #include <avr/pgmspace.h>
 #include <EEPROM.h>
 
-#define DoSensorPin  A1
+#define DoSensorPin  A8
 //dissolved oxygen sensor analog output pin to arduino mainboard
 #define VREF 5000    //for arduino uno, the ADC reference is the AVCC, that is 5000mV(TYP)
 float doValue;      //current dissolved oxygen value, unit; mg/L

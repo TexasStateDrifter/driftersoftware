@@ -36,6 +36,7 @@ void serialEvent3() {                                 //if the hardware serial p
 char* getEC() {                                         //here we go...
 
 
+
   if (input_string_complete == true) {                //if a string from the PC has been received in its entirety
     Serial3.print(inputstring);                       //send that string to the Atlas Scientific product
     Serial3.print('\r');                              //add a <CR> to the end of the string

@@ -307,6 +307,8 @@ void DatalogCond()
       dataFileCond.print(now.second(), DEC);
       dataFileCond.println();
 
+      delete[] arr;
+
       dataFileCond.close();
     }
     else
