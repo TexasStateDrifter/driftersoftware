@@ -18,7 +18,7 @@
 #include <Adafruit_RGBLCDShield.h>
 #include <utility/Adafruit_MCP23017.h>
 
-#define DoSensorPin  A1
+#define DoSensorPin  A8
 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
@@ -279,7 +279,8 @@ int menuSel(int i){
       lcd.clear();
       lcd.setBacklight(NONE); // Turn backlight OFF   
       lcd.noDisplay();
-      while(true){
+      while(true)
+      {
         
         DatalogTemp();
         delay(10);
@@ -291,10 +292,9 @@ int menuSel(int i){
         delay(10);
   
         DatalogCond();
-        delay(10);
 
-        DatalogVolt();
-        delay(60000);
+        //DatalogVolt();
+        delay(5000);
       }
   }
   else{

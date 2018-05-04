@@ -11,6 +11,7 @@ File dataFileCond;
 File dataFileVolt;
 RTC_PCF8523 rtc;
 
+
 const float voltageDivider = 4.9;
 
 char const daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -234,11 +235,6 @@ void DatalogDO()
 void DatalogCond() 
 {
     dataFileCond = SD.open("cond.txt", FILE_WRITE);
-
-    char *EC;                         //char pointer used in string parsing
-    char *TDS;                        //char pointer used in string parsing
-    char *SAL;                        //char pointer used in string parsing
-    char *GRAV;                       //char pointer used in string parsing
     
     if(dataFileCond)
     {
@@ -247,36 +243,35 @@ void DatalogCond()
       dataFileCond.println(F("   "));
 
       DateTime now = rtc.now();
-
-      char* arr = getEC();
-      sensorstring.toCharArray(arr, 30);   //convert the string to a char array
-      EC = strtok(arr, ",");               //let's pars the array at each comma
-      TDS = strtok(NULL, ",");                            //let's pars the array at each comma
-      SAL = strtok(NULL, ",");                            //let's pars the array at each comma
-      GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
+      /*
+      ec1 = getEC();
+      tds1 = getTDS();
+      sal1 = getSAL();
+      grav1 = getGRAV();
       
       Serial.print("EC:");                                //we now print each value we parsed separately
-      Serial.println(EC);                                 //this is the EC value
+      Serial.println(ec1);                                 //this is the EC value
       dataFileCond.print("EC:");
-      dataFileCond.println(EC);
+      dataFileCond.println(ec1);
     
       Serial.print("TDS:");                               //we now print each value we parsed separately
-      Serial.println(TDS);                                //this is the TDS value
+      Serial.println(tds1);                                //this is the TDS value
       dataFileCond.print("TDS:");
-      dataFileCond.println(TDS);
+      dataFileCond.println(tds1);
     
       Serial.print("SAL:");                               //we now print each value we parsed separately
-      Serial.println(SAL);                                //this is the salinity value
+      Serial.println(sal1);                                //this is the salinity value
       dataFileCond.print("SAL:");
-      dataFileCond.println(SAL);
+      dataFileCond.println(sal1);
     
       Serial.print("GRAV:");                              //we now print each value we parsed separately
-      Serial.print(GRAV);                               //this is the specific gravity
+      Serial.print(grav1);                               //this is the specific gravity
       dataFileCond.print("GRAV:");
-      dataFileCond.print(GRAV);
+      dataFileCond.print(grav1);
       Serial.print("   ");                                   //this just makes the output easer to read
       dataFileCond.print("   ");
-
+      */
+      
       Serial.print(now.year(), DEC);
       Serial.print(F("/"));
       Serial.print(now.month(), DEC);
@@ -307,8 +302,6 @@ void DatalogCond()
       dataFileCond.print(now.second(), DEC);
       dataFileCond.println();
 
-      delete[] arr;
-
       dataFileCond.close();
     }
     else
@@ -316,7 +309,9 @@ void DatalogCond()
       Serial.println(F("error opening cond.txt"));
     }
 }
-        
+
+
+/*
 void DatalogVolt()
 {
     dataFileVolt = SD.open("volt.txt", FILE_WRITE);
@@ -347,15 +342,7 @@ void DatalogVolt()
       Serial.print("   ");
       dataFileVolt.print("   ");
       
-/*
-      Serial.print("Solar: ");
-      Serial.print(voltage2);
-      dataFileVolt.print("Solar: ");
-      dataFileVolt.print(voltage2);
 
-      Serial.print("   ");
-      dataFileVolt.print("   ");
-*/
       Serial.print(now.year(), DEC);
       Serial.print('/');
       Serial.print(now.month(), DEC);
@@ -393,5 +380,5 @@ void DatalogVolt()
       Serial.println(F("error opening volt.txt"));
     }
 }
-
+*/
 
