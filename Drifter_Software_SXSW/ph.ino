@@ -2,7 +2,7 @@
 #define Offset 0.11
 unsigned long int avgValue;  //Store the average value of the sensor feedback
 float b;
-int buf[10],temp;
+int buf[10],temp1;
 
 /*void setup()
 {
@@ -25,9 +25,9 @@ float getPH()
     {
       if(buf[i]>buf[j])
       {
-        temp=buf[i];
+        temp1=buf[i];
         buf[i]=buf[j];
-        buf[j]=temp;
+        buf[j]=temp1;
       }
     }
   }

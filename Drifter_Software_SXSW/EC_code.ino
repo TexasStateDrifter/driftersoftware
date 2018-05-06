@@ -12,8 +12,13 @@ String sensorstring = "";                             //a string to hold the dat
 boolean input_string_complete = false;                //have we received all the data from the PC
 boolean sensor_string_complete = false;               //have we received all the data from the Atlas Scientific product
 
+float ECset;
+float TDSset;
+float SALset;
+float GRAVset;
 
-void ECsetup() {                                        //set up the hardware
+void ECsetup() 
+{
   Serial.begin(9600);                                 //set baud rate for the hardware serial port_0 to 9600
   Serial3.begin(38400);                                //set baud rate for software serial port_3 to 9600
   inputstring.reserve(10);                            //set aside some bytes for receiving data from the PC
@@ -33,65 +38,119 @@ void serialEvent3() {                                 //if the hardware serial p
 }
 
 
-void runEC() {                                         //here we go...
+void runEC()                        
+{
+   int r = 1;
+   while(r){
+    
+    serialEvent3(); 
+  
+    Serial.println("Im starting");
 
-
-  if (input_string_complete == true) {                //if a string from the PC has been received in its entirety
+    if (input_string_complete == true) 
+    {                //if a string from the PC has been received in its entirety
     Serial3.print(inputstring);                       //send that string to the Atlas Scientific product
     Serial3.print('\r');                              //add a <CR> to the end of the string
     inputstring = "";                                 //clear the string
     input_string_complete = false;                    //reset the flag used to tell if we have received a completed string from the PC
-  }
-
-  if (sensor_string_complete == true) {               //if a string from the Atlas Scientific product has been received in its entirety
-    if (isdigit(sensorstring[0]) == false) {          //if the first character in the string is a digit
-      Serial.println(sensorstring);                   //send that string to the PC's serial monitor
+    }
+    
+  if (sensor_string_complete == true) 
+  {               //if a string from the Atlas Scientific product has been received in its entirety
+    if (isdigit(sensorstring[0]) == false) 
+    {          //if the first character in the string is a digit
+      //Serial.println(sensorstring);                   //send that string to the PC's serial monitor
     }
     else                                              //if the first character in the string is NOT a digit
     {
-      print_EC_data(); 
+        char sensorstring_array[30];                        //we make a char array
+        char *EC;                                           //char pointer used in string parsing
+        char *TDS;                                          //char pointer used in string parsing
+        char *SAL;                                          //char pointer used in string parsing
+        char *GRAV;                                         //char pointer used in string parsing
+      
+        float ecNumb;
+        float tdsNumb;
+        float salNumb;
+        float gravNumb;
+      
+        sensorstring.toCharArray(sensorstring_array, 30);   //convert the string to a char array
+        EC = strtok(sensorstring_array, ",");               //let's pars the array at each comma
+        TDS = strtok(NULL, ",");                            //let's pars the array at each comma
+        SAL = strtok(NULL, ",");                            //let's pars the array at each comma
+        GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
+      
+        ecNumb = atof(EC);
+        tdsNumb = atof(TDS);
+        salNumb = atof(SAL);
+        gravNumb = atof(GRAV);
+      
+        //Serial.print("EC:");                                //we now print each value we parsed separately
+        //Serial.println(EC);                                 //this is the EC value
+        setEC(ecNumb);
+      
+        //Serial.print("TDS:");                               //we now print each value we parsed separately
+        //Serial.println(TDS);                                //this is the TDS value
+        setTDS(tdsNumb);
+      
+        //Serial.print("SAL:");                               //we now print each value we parsed separately
+        //Serial.println(SAL);                                //this is the salinity value
+        setSAL(salNumb);
+      
+        //Serial.print("GRAV:");                              //we now print each value we parsed separately
+        //Serial.println(GRAV);                               //this is the specific gravity
+        setGRAV(gravNumb);
+        //Serial.println();                                   //this just makes the output easer to read
+        r = 0;
     }
     sensorstring = "";                                //clear the string
     sensor_string_complete = false;                   //reset the flag used to tell
   } 
+  }
+Serial.println("do i survive?");
+}
+
+float getEC()
+{
+  return ECset;
+}
+
+void setEC(float ecNumb)
+{
+  ECset = ecNumb;
 }
 
 
-void print_EC_data(void) {                            //this function will pars the string
+float getTDS()
+{
+  return TDSset;
+}
 
-  char sensorstring_array[30];                        //we make a char array
-  char *EC;                                           //char pointer used in string parsing
-  char *TDS;                                          //char pointer used in string parsing
-  char *SAL;                                          //char pointer used in string parsing
-  char *GRAV;                                         //char pointer used in string parsing
-
-  dataFileCond = SD.open("cond.txt", FILE_WRITE);
-
-  sensorstring.toCharArray(sensorstring_array, 30);   //convert the string to a char array
-  EC = strtok(sensorstring_array, ",");               //let's pars the array at each comma
-  TDS = strtok(NULL, ",");                            //let's pars the array at each comma
-  SAL = strtok(NULL, ",");                            //let's pars the array at each comma
-  GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
-
-
-  Serial.print("EC:");                                //we now print each value we parsed separately
-  Serial.println(EC);                                 //this is the EC value
-
-
-  Serial.print("TDS:");                               //we now print each value we parsed separately
-  Serial.println(TDS);                                //this is the TDS value
-
-  Serial.print("SAL:");                               //we now print each value we parsed separately
-  Serial.println(SAL);                                //this is the salinity value
-  
-
-  Serial.print("GRAV:");                              //we now print each value we parsed separately
-  Serial.println(GRAV);                               //this is the specific gravity
-  Serial.println();                                   //this just makes the output easer to read
-
-  //dataFileCond.close();
-
+void setTDS(float tdsNumb)
+{
+  TDSset = tdsNumb;
 }
 
 
 
+float getSAL()
+{
+  return SALset;
+}
+
+void setSAL(float salNumb)
+{
+  SALset = salNumb;
+}
+
+
+
+float getGRAV()
+{
+  return GRAVset;
+}
+
+void setGRAV(float gravNumb)
+{
+  GRAVset = gravNumb;
+}

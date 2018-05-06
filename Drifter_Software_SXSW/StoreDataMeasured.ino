@@ -243,11 +243,12 @@ void DatalogCond()
       dataFileCond.println(F("   "));
 
       DateTime now = rtc.now();
-      /*
-      ec1 = getEC();
-      tds1 = getTDS();
-      sal1 = getSAL();
-      grav1 = getGRAV();
+      runEC();
+      
+      float ec1 = getEC();
+      float tds1 = getTDS();
+      float sal1 = getSAL();
+      float grav1 = getGRAV();
       
       Serial.print("EC:");                                //we now print each value we parsed separately
       Serial.println(ec1);                                 //this is the EC value
@@ -270,7 +271,7 @@ void DatalogCond()
       dataFileCond.print(grav1);
       Serial.print("   ");                                   //this just makes the output easer to read
       dataFileCond.print("   ");
-      */
+      
       
       Serial.print(now.year(), DEC);
       Serial.print(F("/"));
@@ -301,7 +302,7 @@ void DatalogCond()
       dataFileCond.print(':');
       dataFileCond.print(now.second(), DEC);
       dataFileCond.println();
-
+      
       dataFileCond.close();
     }
     else
