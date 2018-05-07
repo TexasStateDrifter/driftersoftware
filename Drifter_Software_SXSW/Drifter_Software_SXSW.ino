@@ -63,6 +63,8 @@ int daySet;
 int hourSet;
 int minuteSet;
 int secondSet;
+
+int counterLoop;
                                                                  
 String const menu[MENU_COUNT+1] PROGMEM = {"Run        ","Sample Now ","Sensors    ","Sample Freq","Time/Date  ","SleepMode  ","Backlight  ","           "};
 String const subSensor[5] PROGMEM = {"Temp        ","pH          ","Cond.       ","D.O.       "};
@@ -401,26 +403,35 @@ int menuSel (int menuVar, int pos)
 {
   if (menuVar == 0 && pos == 0)
   {
-    /*
+    int sleepLoop;
     lcd.clear();
     lcd.setCursor(0,0);
     if(getFreq() == 0)
     {
-      lcd.print(15);
+      sleepLoop = 5;
     }
     else
     {
-    lcd.print(getFreq());
+      sleepLoop = getFreq();
     }
-    
-    delay(3000);
-   */
+
+    lcd.print(sleepLoop);
+
+    delay(1000);
     
     lcd.clear();
     lcd.setBacklight(NONE); // Turn backlight OFF   
     lcd.noDisplay();
     while(true)
     {
+      Serial.println("Enter Sleep Mode");
+      counterLoop = 0;
+      while(counterLoop != sleepLoop)
+      {
+        delay(1000);
+        counterLoop++;
+      }
+      Serial.println("Out of Sleep Mode");
       
       //DatalogTemp();
       //delay(10);
@@ -431,11 +442,12 @@ int menuSel (int menuVar, int pos)
       //DatalogPH(); 
       //delay(10);
 
-      DatalogCond();
+      //DatalogCond();
 
       //DatalogVolt();
-      delay(2000);
+      //delay(2000);
     }
+    
     
     /*
     set_sleep_mode (SLEEP_MODE_PWR_DOWN);  
@@ -445,7 +457,7 @@ int menuSel (int menuVar, int pos)
     delay(3000);
 
     sleep_disable();
-    
+    */
 
 
     
@@ -458,7 +470,6 @@ int menuSel (int menuVar, int pos)
     lcd.print(menu[1]);
     setPos(0);
     return 0;
-    */
   }
   
   if (menuVar == 0 && pos == 1)  //Sample Now
@@ -786,14 +797,14 @@ void setPos(int Position)
 
 
 ///////////////
-long int getFreq() //  freq Variable
+int getFreq() //  freq Variable
 {
      return freq;
 }
 
-void setFreq(long int mili)
+void setFreq(int tot)
 {
-     freq = mili;
+     freq = tot;
 }
 
 
@@ -1142,9 +1153,11 @@ int lcdSampleRate()
   lcd.setCursor(0,1);
   lcd.print(subSampleFreq[1]);
   
-  int freqMin = 15;
+  int freqMin = 5;
   int freqHr = 0;
   lcd.setCursor(14,1);
+  lcd.print(0);
+  lcd.setCursor(15,1);
   lcd.print(freqMin);
   bool b = 1;
   while(b)
@@ -1201,7 +1214,7 @@ int lcdSampleRate()
     
     else if (lcd_key == BUTTON_DOWN)
     {
-      if (freqMin == 15 && freqHr == 0)
+      if (freqMin == 5 && freqHr == 0)
       {
       }
       
@@ -1287,11 +1300,9 @@ int lcdSampleRate()
     {
       Serial.println(freqMin);
       Serial.println(freqHr);
-      long int miliMin = (freqMin * (60000));
-      Serial.println(miliMin);
-      long int miliHr = (freqHr * (3600000));
-      Serial.println(miliHr);
-      freq = (miliMin + miliHr);
+      int Hr123 = (freqHr * (60));
+      Serial.println(Hr123);
+      freq = (freqMin + Hr123);
       Serial.println(freq);
       setFreq(freq);
       lcd.clear();
