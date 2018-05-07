@@ -43,7 +43,8 @@ void runEC()
    int r = 1;
    while(r){
     
-    serialEvent3(); 
+    serialEvent3();
+     
   
     Serial.println("Im starting");
 
