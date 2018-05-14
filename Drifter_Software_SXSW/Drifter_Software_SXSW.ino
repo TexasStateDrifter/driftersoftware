@@ -415,52 +415,61 @@ int menuSel (int menuVar, int pos)
       sleepLoop = getFreq();
     }
 
-    lcd.print(sleepLoop);
+    //lcd.print(sleepLoop);
 
-    delay(1000);
-    
+    //delay(1000);
     lcd.clear();
     lcd.setBacklight(NONE); // Turn backlight OFF   
     lcd.noDisplay();
     while(true)
     {
-      Serial.println("Enter Sleep Mode");
+      DateTime now = rtc1.now();
+      Serial.print("Enter Sleep Mode   ");
+
+      Serial.print(now.year(), DEC);
+      Serial.print(F("/"));
+      Serial.print(now.month(), DEC);
+      Serial.print(F("/"));
+      Serial.print(now.day(), DEC);
+      Serial.print(F(" "));
+      Serial.print(now.hour(), DEC);
+      Serial.print(F(":"));
+      Serial.print(now.minute(), DEC);
+      Serial.print(F(":"));
+      Serial.print(now.second(), DEC);
+      Serial.println();
+      
+      delay(30);
       counterLoop = 0;
       while(counterLoop != sleepLoop)
       {
-        delay(1000);
+        sleepSetup();
+        delay(30);
+        sleepNow();
+        delay(100);
         counterLoop++;
       }
+
+      
       Serial.println("Out of Sleep Mode");
       
-      //DatalogTemp();
-      //delay(10);
+      DatalogTemp();
+      delay(10);
       
-      //DatalogDO();
-      //delay(10);
+      DatalogDO();
+      delay(10);
 
-      //DatalogPH(); 
-      //delay(10);
+      DatalogPH(); 
+      delay(10);
 
-      //DatalogCond();
+      DatalogCond();
+      delay(10);
 
       //DatalogVolt();
-      //delay(2000);
+      delay(100);
     }
     
-    
     /*
-    set_sleep_mode (SLEEP_MODE_PWR_DOWN);  
-    sleep_enable();
-    sleep_cpu ();
-
-    delay(3000);
-
-    sleep_disable();
-    */
-
-
-    
     lcd.setCursor(0,0);
     lcd.print(F("        "));
     lcd.setCursor(0, 0);
@@ -470,6 +479,7 @@ int menuSel (int menuVar, int pos)
     lcd.print(menu[1]);
     setPos(0);
     return 0;
+    */
   }
   
   if (menuVar == 0 && pos == 1)  //Sample Now
@@ -478,21 +488,21 @@ int menuSel (int menuVar, int pos)
     if(getToggleTemp() == 1)
     {
       lcd.print("Temp:");
-      //lcd.print(getTemp());
+      lcd.print(getTemp());
       delay(3000);
     }
     lcd.clear();
     if(getToggleDO() == 1)
     {
       lcd.print("DO:");
-      //lcd.print(getDO());
+      lcd.print(getDO());
       delay(3000);
     }
     lcd.clear();
     if(getTogglePH() == 1)
     {
       lcd.print("pH:");
-      //lcd.print(getPH());
+      lcd.print(getPH());
       delay(3000);
     }
     lcd.clear();
@@ -506,7 +516,6 @@ int menuSel (int menuVar, int pos)
       lcd.setCursor(0,1);
       lcd.print("TDS:");
       lcd.print(getTDS());
-      //lcd.print(getCond());
       delay(3000);
       
       lcd.clear();
@@ -1566,6 +1575,8 @@ void modHour()
   lcd.print("Please set Hour");
   lcd.setCursor(0,1);
   lcd.print(hourNew);
+  lcd.setCursor(11,1);
+  lcd.print("24-Hr");
   int b = 1;
   while(b)
   {

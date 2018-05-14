@@ -46,7 +46,6 @@ void runEC()
     serialEvent3();
      
   
-    Serial.println("Im starting");
 
     if (input_string_complete == true) 
     {                //if a string from the PC has been received in its entirety
@@ -108,7 +107,11 @@ void runEC()
     sensor_string_complete = false;                   //reset the flag used to tell
   } 
   }
-Serial.println("do i survive?");
+}
+
+void ledOff()
+{
+                                           
 }
 
 float getEC()
