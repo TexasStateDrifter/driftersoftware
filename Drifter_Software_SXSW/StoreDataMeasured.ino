@@ -4,19 +4,24 @@
 #include <Wire.h>
 #include "RTClib.h"
 
-File dataFileTemp;
-File dataFilePH;
-File dataFileDO;
-File dataFileCond;
-File dataFileVolt;
-RTC_PCF8523 rtc;
+File dataFileTemp; // Text file for Temperature
+File dataFilePH; // Text file for PH
+File dataFileDO; // Text file for DO
+File dataFileCond; // Text file for Conductivity
+RTC_PCF8523 rtc; // Using the RTC as an object for the 1st time in the software
 
 
-const float voltageDivider = 4.9;
 
-char const daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 double temp_F;
 
+
+/******************************************************
+* RTC setup
+*
+* Description - This function setups the RTC as well 
+* as an initialization of the SD card to the system
+*
+******************************************************/
 void RTCsetup() 
 {
   //The serial monitor output will only be read in 9600
@@ -37,7 +42,7 @@ void RTCsetup()
   }
   Serial.println("initialization done.");
 
-  if (!rtc.initialized()) {
+  if (!rtc.initialized()) { // Remove the ! in order to adjust the DateTime via code
     Serial.println(F("RTC is NOT running!"));
     // following line sets the RTC to the date & time this sketch was compiled
     // rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
@@ -47,33 +52,58 @@ void RTCsetup()
   }
 }
 
+/******************************************************
+* Datalog functions
+*
+* Description - These functions are in charge of opening 
+* a repective text file and calling the measurment functions 
+* in order to be stored on to the SD card
+*
+******************************************************/
 
+
+/*
+ * Datalog Temperature
+ * 
+ * This function is in charge of storing both a fahrenheit and
+ * celcius temperature on to the SD card
+ *
+ */
+ 
 void DatalogTemp() 
 {
-    dataFileTemp = SD.open("temp.txt", FILE_WRITE);
+    dataFileTemp = SD.open("temp.txt", FILE_WRITE); // Opens the temperture text file
 
     if(dataFileTemp)
     {
+      //Display data and time on both Serial and SD for testing
+      
       Serial.println(F("   "));
       dataFileTemp.println(F("   "));
       
-      float temperature = getTemp();
+      float temperature = getTemp(); // function to measure temperature
       DateTime now = rtc.now();
+
+      
       
       Serial.print(temperature);
       dataFileTemp.print(temperature);
+      Serial.print(",");
+      dataFileTemp.print(",");
       Serial.print(F("°C"));
       dataFileTemp.print(F("°C"));
-      Serial.print(F(" "));
-      dataFileTemp.print(F(" "));
-      temp_F = ((temperature * 1.8) + 32);
+      Serial.print(F(","));
+      dataFileTemp.print(F(","));
+      temp_F = ((temperature * 1.8) + 32); // function to change celcius to fahrenheit
       Serial.print(temp_F);
       dataFileTemp.print(temp_F);
+      Serial.print(",");
+      dataFileTemp.print(",");
       Serial.print(F("°F"));
       dataFileTemp.print(F("°F"));
 
-      Serial.print(F("   "));
-      dataFileTemp.print(F("   "));
+      Serial.print(F(","));
+      dataFileTemp.print(F(","));
 
       
       Serial.print(now.year(), DEC);
@@ -81,9 +111,9 @@ void DatalogTemp()
       Serial.print(now.month(), DEC);
       Serial.print(F("/"));
       Serial.print(now.day(), DEC);
-      Serial.print(F(" ("));
-      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      Serial.print(F(") "));
+      
+      Serial.print(F(","));
+      
       Serial.print(now.hour(), DEC);
       Serial.print(F(":"));
       Serial.print(now.minute(), DEC);
@@ -96,9 +126,9 @@ void DatalogTemp()
       dataFileTemp.print(now.month(), DEC);
       dataFileTemp.print('/');
       dataFileTemp.print(now.day(), DEC);
-      dataFileTemp.print(" (");
-      dataFileTemp.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      dataFileTemp.print(") ");
+
+      dataFileTemp.print(F(","));
+
       dataFileTemp.print(now.hour(), DEC);
       dataFileTemp.print(':');
       dataFileTemp.print(now.minute(), DEC);
@@ -110,17 +140,26 @@ void DatalogTemp()
     }
     else
     {
-      Serial.println(F("error opening temp.txt"));
+      Serial.println(F("error opening temp.txt")); // Alert the user if file could not be open
     }
 }
 
-
+/*
+ * Datalog PH
+ * 
+ * This function is in charge of storing PH
+ * on to the SD card
+ *
+ */
+ 
 void DatalogPH() 
 {
-    dataFilePH = SD.open("ph.txt", FILE_WRITE);
+    dataFilePH = SD.open("ph.txt", FILE_WRITE); // Opens the PH text file
 
     if(dataFilePH)
     {
+      //Display data and time on both Serial and SD for testing
+      
       Serial.println(F("   "));
       dataFilePH.println(F("   "));
       
@@ -129,10 +168,12 @@ void DatalogPH()
       
       Serial.print(ph);
       dataFilePH.print(ph);
+      Serial.print(F(","));
+      dataFilePH.print(F(","));
       Serial.print("PH");
       dataFilePH.print("PH");
-      Serial.print(F("   "));
-      dataFilePH.print(F("   "));
+      Serial.print(F(","));
+      dataFilePH.print(F(","));
 
       
       Serial.print(now.year(), DEC);
@@ -140,9 +181,9 @@ void DatalogPH()
       Serial.print(now.month(), DEC);
       Serial.print(F("/"));
       Serial.print(now.day(), DEC);
-      Serial.print(F(" ("));
-      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      Serial.print(F(") "));
+
+      Serial.print(F(","));
+
       Serial.print(now.hour(), DEC);
       Serial.print(F(":"));
       Serial.print(now.minute(), DEC);
@@ -155,9 +196,9 @@ void DatalogPH()
       dataFilePH.print(now.month(), DEC);
       dataFilePH.print('/');
       dataFilePH.print(now.day(), DEC);
-      dataFilePH.print(" (");
-      dataFilePH.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      dataFilePH.print(") ");
+
+      dataFilePH.print(F(","));
+
       dataFilePH.print(now.hour(), DEC);
       dataFilePH.print(':');
       dataFilePH.print(now.minute(), DEC);
@@ -169,16 +210,27 @@ void DatalogPH()
     }
     else
     {
-      Serial.println(F("error opening ph.txt"));
+      Serial.println(F("error opening ph.txt")); // Alert the user if file could not be open
     }
 }
 
+/*
+ * Datalog DO
+ * 
+ * This function is in charge of storing Dissolved
+ * Oxygen on to the SD card
+ *
+ */
+
 void DatalogDO() 
 {
-    dataFileDO = SD.open("do.txt", FILE_WRITE);
+  
+    dataFileDO = SD.open("do.txt", FILE_WRITE); // Opens the DO text file
 
     if(dataFileDO)
     {
+      //Display data and time on both Serial and SD for testing
+      
       Serial.println(F("   "));
       dataFileDO.println(F("   "));
       
@@ -187,10 +239,12 @@ void DatalogDO()
       
       Serial.print(DO);
       dataFileDO.print(DO);
+      Serial.println(F(","));
+      dataFileDO.println(F(","));
       Serial.print(F("mg/L"));
       dataFileDO.print(F("mg/L"));
-      Serial.print(F("   "));
-      dataFileDO.print(F("   "));
+      Serial.println(F(","));
+      dataFileDO.println(F(","));
 
       
       Serial.print(now.year(), DEC);
@@ -198,9 +252,9 @@ void DatalogDO()
       Serial.print(now.month(), DEC);
       Serial.print(F("/"));
       Serial.print(now.day(), DEC);
-      Serial.print(F(" ("));
-      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      Serial.print(F(") "));
+
+      Serial.println(F(","));
+
       Serial.print(now.hour(), DEC);
       Serial.print(F(":"));
       Serial.print(now.minute(), DEC);
@@ -213,9 +267,9 @@ void DatalogDO()
       dataFileDO.print(now.month(), DEC);
       dataFileDO.print('/');
       dataFileDO.print(now.day(), DEC);
-      dataFileDO.print(" (");
-      dataFileDO.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      dataFileDO.print(") ");
+            
+      dataFileDO.println(F(","));
+
       dataFileDO.print(now.hour(), DEC);
       dataFileDO.print(':');
       dataFileDO.print(now.minute(), DEC);
@@ -227,50 +281,73 @@ void DatalogDO()
     }
     else
     {
-      Serial.println(F("error opening do.txt"));
+      Serial.println(F("error opening do.txt")); // Alert the user if file could not be open
     }
 }
 
-
+/*
+ * Datalog Conductivity
+ * 
+ * This function is in charge of storing Conductivity
+ * on to the SD card
+ *
+ */
+ 
 void DatalogCond() 
 {
-    dataFileCond = SD.open("cond.txt", FILE_WRITE);
+    dataFileCond = SD.open("cond.txt", FILE_WRITE); // Opens the Conductivity text file
     
     if(dataFileCond)
     {
-
+      //Display data and time on both Serial and SD for testing
+      
       Serial.println(F("   "));
       dataFileCond.println(F("   "));
 
       DateTime now = rtc.now();
-      runEC();
+      runEC(); // Fucntion called to run a conductivity measuring loop
       
-      float ec1 = getEC();
-      float tds1 = getTDS();
-      float sal1 = getSAL();
-      float grav1 = getGRAV();
+      float ec1 = getEC(); // Function called to grab Conductivity
+      float tds1 = getTDS(); // Function called to grab Total Dissolved Solids
+      float sal1 = getSAL(); // Function called to grab Salinity
+      float grav1 = getGRAV(); // Function called to grab Gravity
       
-      Serial.print("EC:");                                //we now print each value we parsed separately
-      Serial.println(ec1);                                 //this is the EC value
-      dataFileCond.print("EC:");
-      dataFileCond.println(ec1);
+      
+      Serial.print("EC");       //we now print each value we parsed separately
+      Serial.print(","); 
+      Serial.print(ec1);        //this is the EC value
+      Serial.print(","); 
+      dataFileCond.print("EC");
+      dataFileCond.print(","); 
+      dataFileCond.print(ec1);
+      dataFileCond.print(","); 
     
-      Serial.print("TDS:");                               //we now print each value we parsed separately
-      Serial.println(tds1);                                //this is the TDS value
-      dataFileCond.print("TDS:");
-      dataFileCond.println(tds1);
+      Serial.print("TDS");       //we now print each value we parsed separately
+      Serial.print(","); 
+      Serial.print(tds1);        //this is the TDS value
+      Serial.print(","); 
+      dataFileCond.print("TDS");
+      dataFileCond.print(",");
+      dataFileCond.print(tds1);
+      dataFileCond.print(",");
     
-      Serial.print("SAL:");                               //we now print each value we parsed separately
-      Serial.println(sal1);                                //this is the salinity value
-      dataFileCond.print("SAL:");
-      dataFileCond.println(sal1);
+      Serial.print("SAL");        //we now print each value we parsed separately
+      Serial.print(",");
+      Serial.print(sal1);         //this is the salinity value
+      Serial.print(",");
+      dataFileCond.print("SAL");
+      dataFileCond.print(",");
+      dataFileCond.print(sal1);
+      dataFileCond.print(",");
     
-      Serial.print("GRAV:");                              //we now print each value we parsed separately
-      Serial.print(grav1);                               //this is the specific gravity
-      dataFileCond.print("GRAV:");
+      Serial.print("GRAV");       //we now print each value we parsed separately
+      Serial.print(",");
+      Serial.print(grav1);        //this is the specific gravity
+      Serial.print(",");
+      dataFileCond.print("GRAV");
+      dataFileCond.print(",");
       dataFileCond.print(grav1);
-      Serial.print("   ");                                   //this just makes the output easer to read
-      dataFileCond.print("   ");
+      dataFileCond.print(",");
       
       
       Serial.print(now.year(), DEC);
@@ -278,9 +355,9 @@ void DatalogCond()
       Serial.print(now.month(), DEC);
       Serial.print(F("/"));
       Serial.print(now.day(), DEC);
-      Serial.print(F(" ("));
-      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      Serial.print(F(") "));
+
+      Serial.print(",");
+
       Serial.print(now.hour(), DEC);
       Serial.print(F(":"));
       Serial.print(now.minute(), DEC);
@@ -293,9 +370,9 @@ void DatalogCond()
       dataFileCond.print(now.month(), DEC);
       dataFileCond.print('/');
       dataFileCond.print(now.day(), DEC);
-      dataFileCond.print(" (");
-      dataFileCond.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      dataFileCond.print(") ");
+
+      dataFileCond.print(",");
+
       dataFileCond.print(now.hour(), DEC);
       dataFileCond.print(':');
       dataFileCond.print(now.minute(), DEC);
@@ -307,79 +384,9 @@ void DatalogCond()
     }
     else
     {
-      Serial.println(F("error opening cond.txt"));
+      Serial.println(F("error opening cond.txt")); // Alert the user if file could not be open
     }
 }
 
 
-/*
-void DatalogVolt()
-{
-    dataFileVolt = SD.open("volt.txt", FILE_WRITE);
-
-    if(dataFileVolt)
-    {
-      Serial.println(F("   "));
-      dataFileVolt.println(F("   "));
-
-      DateTime now = rtc.now();
-      
-      // read the input on analog pin 0:
-      int sensorValue = analogRead(A2); // Battery output
-      //int sensorValue2 = analogRead(A3); // Solar output
-      
-      // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
-      float voltageRead = sensorValue * (5.0 / 1023.0);
-      //float voltageRead2 = sensorValue2 * (5.0 / 1023.0);
-
-      float voltage = (voltageRead * voltageDivider);
-      //float voltage2 = (voltageRead2 * voltageDivider);
-
-      Serial.print("Battery: ");
-      Serial.print(voltage);
-      dataFileVolt.print("Battery: ");
-      dataFileVolt.print(voltage);
-      
-      Serial.print("   ");
-      dataFileVolt.print("   ");
-      
-
-      Serial.print(now.year(), DEC);
-      Serial.print('/');
-      Serial.print(now.month(), DEC);
-      Serial.print('/');
-      Serial.print(now.day(), DEC);
-      Serial.print(" (");
-      Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      Serial.print(") ");
-      Serial.print(now.hour(), DEC);
-      Serial.print(':');
-      Serial.print(now.minute(), DEC);
-      Serial.print(':');
-      Serial.print(now.second(), DEC);
-      Serial.println();
-  
-      dataFileVolt.print(now.year(), DEC);
-      dataFileVolt.print('/');
-      dataFileVolt.print(now.month(), DEC);
-      dataFileVolt.print('/');
-      dataFileVolt.print(now.day(), DEC);
-      dataFileVolt.print(" (");
-      dataFileVolt.print(daysOfTheWeek[now.dayOfTheWeek()]);
-      dataFileVolt.print(") ");
-      dataFileVolt.print(now.hour(), DEC);
-      dataFileVolt.print(':');
-      dataFileVolt.print(now.minute(), DEC);
-      dataFileVolt.print(':');
-      dataFileVolt.print(now.second(), DEC);
-      dataFileVolt.println(); 
-
-      dataFileVolt.close();
-    }
-    else
-    {
-      Serial.println(F("error opening volt.txt"));
-    }
-}
-*/
 

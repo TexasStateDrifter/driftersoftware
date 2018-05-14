@@ -4,13 +4,15 @@ unsigned long int avgValue;  //Store the average value of the sensor feedback
 float b;
 int buf[10],temp1;
 
-/*void setup()
-{
-  pinMode(13,OUTPUT);  
-  Serial.begin(9600);  
-  Serial.println("Ready");    //Test the serial monitor
-}
-*/
+/******************************************************
+* GetPH
+*
+* Description - This function runs a bit adder algorithm
+* that measures temperature in celcius and returns
+* an integer based off an array sum
+*
+*
+******************************************************/
 
 float getPH()
 {
@@ -38,11 +40,8 @@ float getPH()
   phValue=3.5*phValue+Offset; //convert the millivolt into pH value
 
   return phValue;
-  //Serial.print("    pH:");  
-  //Serial.print(phValue,2);
-  //Serial.println(" ");
+
   //digitalWrite(13, HIGH);       
-  //delay(2000);
   //digitalWrite(13, LOW); 
 }
 

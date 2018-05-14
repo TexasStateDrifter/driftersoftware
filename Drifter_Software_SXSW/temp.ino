@@ -6,6 +6,16 @@ int DS18S20_Pin = 4; //DS18S20 Signal pin on digital 4
 //Temperature chip i/o
 OneWire ds(DS18S20_Pin);  // on digital pin 4
 
+/******************************************************
+* Get Temperature
+*
+* Description - This function runs a bit adder algorithm
+* that measures temperature in celcius and returns
+* an integer based off an array sum
+*
+*
+******************************************************/
+
 float getTemp(){
   //returns the temperature from one DS18S20 in DEG Celsius
 

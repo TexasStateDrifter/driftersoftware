@@ -24,21 +24,25 @@
 
 #include <SD.h>
 #include "RTClib.h"
-RTC_PCF8523 rtc1;
-
+RTC_PCF8523 rtc1; // Using the RTC as an object for the 2nd time in the software
+ 
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
+
+#define DoSensorPin  A8 // Clarify DO connection to A8
 
 // These #define make it easy to set the backlight color.
 // Note: Can delete this whole section if you know you want
 //       to set it to particular color. Backlight is color
 //       is initialized in "void setup()".
-#define DoSensorPin  A8
 
 #define NONE    0x0
 #define GREEN   0x2
 #define WHITE   0x7
 
-#define MENU_COUNT 7 // Number of total MENU options -- Modify the number of rows in the array
+// Number of total MENU options -- Modify the number of rows in the array
+#define MENU_COUNT 7
+
+// Sub menu Options and Sizes
 #define SUBSENSOR_COUNT 4
 #define SUBFREQ_COUNT 2
 #define SUBDATE_COUNT 2
@@ -47,17 +51,17 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 
 
 int pos = 0; //position of the array
-int menuVar = 0; //which menu
-int arrSize;
-long int freq; //frequncy in mili
+int menuVar = 0; //list of menus
+int arrSize; //size of each menu/submenu
+long int freq;
 
-
-bool temp = 1; //bool variables determine probe toggle, 1 = ON, 0 = OFF
+//bool variables determine probe toggle, 1 = ON, 0 = OFF
+bool temp = 1;
 bool pH = 1;
 bool cond = 1;
 bool dO = 1;
 
-int yearSet;
+int yearSet; // setting the date based off user function 
 int monthSet;
 int daySet;
 int hourSet;
@@ -65,8 +69,9 @@ int minuteSet;
 int secondSet;
 
 int counterLoop;
-                                                                 
-String const menu[MENU_COUNT+1] PROGMEM = {"Run        ","Sample Now ","Sensors    ","Sample Freq","Time/Date  ","SleepMode  ","Backlight  ","           "};
+
+// all menu Arrays                                                                      
+String const menu[MENU_COUNT+1] PROGMEM = {"Run        ","Sample Now ","Sensors    ","Sample Freq","Time/Date  ","Backlight  ","Backlight  ","           "};
 String const subSensor[5] PROGMEM = {"Temp        ","pH          ","Cond.       ","D.O.       "};
 String const subSampleFreq[3] PROGMEM = {"    Mod Rate    ","HR:MIN     00:0"};
 String const subDate[3] PROGMEM = {"Date","Time"};
@@ -74,13 +79,11 @@ String const subSleep[3] PROGMEM = {"ON","OFF"};
 String const subLight[3] PROGMEM = {"ON","OFF"};
 
 
-
+// setup code sets up the 1st page of the main menu as well as minor sensor adjustments
 void setup() 
 {
   Serial.begin(9600);
-// setup code sets up the 1st page of the main menu
   RTCsetup();
-//  funcSetup();
   ECsetup();
   lcd.begin(16, 2);
   lcd.setCursor(0, 0);
@@ -103,48 +106,38 @@ void loop()
   uint8_t lcd_key = lcd.readButtons();  // Read the buttons
   
   switch (lcd_key){               // depending on which button was pushed, we perform an action
-       case BUTTON_RIGHT:{             //  push button "RIGHT" and show the word on the screen
-            //lcd.print(F("RIGHT"));
+       case BUTTON_RIGHT:{
             
             delay(100);
             break;
        }
        case BUTTON_LEFT:{
-            //lcd.print(F("LEFT ")); //  push button "LEFT" and show the word on the screen
           
-            menuLeft();     
+            menuLeft(); // back button to revert to main menu    
             delay(100);
             break;
        }    
        case BUTTON_UP:{
-            //lcd.print(F("UP   "));  //  push button "UP" and show the word on the screen
             
-            String* arr = menuNumb(getmenuVar());
-            arrSize = menuSize(getmenuVar());
-            //setPos(menuUp(getPos(), arrSize, arr));
-            menuUp(getPos(), arrSize, arr);
-            //Serial.println(pos);
+            String* arr = menuNumb(getmenuVar()); // function to set array/menu selected
+            arrSize = menuSize(getmenuVar()); // function to grab menu/sub menu size
+            menuUp(getPos(), arrSize, arr); // function to place cursor on screen
             
             delay(100);
             break; 
        }
        case BUTTON_DOWN:{
-            //lcd.print(F("DOWN "));  //  push button "DOWN" and show the word on the screen;
             
-            String* arr = menuNumb(getmenuVar());
-            arrSize = menuSize(getmenuVar());
-            //setPos(menuDown(getPos(), arrSize, arr));
-            menuDown(getPos(), arrSize, arr);
-            //Serial.println(pos);
+            String* arr = menuNumb(getmenuVar()); // function to set array/menu selected
+            arrSize = menuSize(getmenuVar()); // function to grab menu/sub menu size
+            menuDown(getPos(), arrSize, arr); // function to place cursor on screen
             
             delay(100);
             break;       
        }
        case BUTTON_SELECT:{
-            //lcd.print(F("SEL  "));  //  push button "SELECT" and show the word on the screen
             
-            setmenuVar(menuSel(getmenuVar(), getPos()));
-            //setPos(0);
+            setmenuVar(menuSel(getmenuVar(), getPos())); // function to set menu selected
             delay(100);
             break;
        }
@@ -155,10 +148,15 @@ void loop()
   }
 }
 
-//Menu Size
-//
-//
-//
+/******************************************************
+* Size function
+*
+* Description - This function grabs which menu array the
+* LCD is currently on and returns the size
+*
+*
+******************************************************/
+
 int menuSize(int menuVar)
 {
   switch(menuVar)
@@ -201,14 +199,16 @@ int menuSize(int menuVar)
   }
 }
 
-// Finding Position
 
 
+/******************************************************
+* Set Menu
+*
+* Description - This function grabs the postion of the
+* current menu array and returns the sub menu array
+*
+******************************************************/
 
-// Choosing Menu Function
-//
-//
-//
 String* menuNumb (int menuVar)
 {
   switch(menuVar)
@@ -265,11 +265,17 @@ String* menuNumb (int menuVar)
   
 }
 
-//Button function
-//
-//
-//
-void menuUp(int pos, int arrSize, String *arr)
+/******************************************************
+* Button UP/Down
+*
+* Description - These buttons when selected will move
+* the cursor up or down on each menu/sub menu and will
+* display a proper position based off the current menu
+*
+******************************************************/
+
+
+void menuUp(int pos, int arrSize, String *arr) // Cursor will move upward until top of menu array
 {
   lcd.setCursor(0,0);
   lcd.print((" "));
@@ -320,12 +326,12 @@ void menuUp(int pos, int arrSize, String *arr)
       displayToggle();
     }
   }
-  //return pos;
 }
 
-void menuDown(int pos, int arrSize, String *arr)
+///////////////////////////////////////////////////////////////////
+
+void menuDown(int pos, int arrSize, String *arr) // Cursor will move downard until end of menu array
 {
-    //lcd.print(F("DOWN "));  //  push button "DOWN" and show the word on the screen;
   lcd.setCursor(0,0);
   lcd.print((" "));
   lcd.setCursor(0,1);
@@ -394,36 +400,43 @@ void menuDown(int pos, int arrSize, String *arr)
   }
 }
 
-// Menu Select Buttons
-//
-//
-//
-//
+
+/******************************************************
+* Button Select
+*
+* Description - This button when selected will assure
+* a confirmation by the user and will either move the 
+* LCD to print a particular sub menu and/or allow the user
+* to store user adjusted variables. The system will then
+* return the postion of the array
+*
+******************************************************/
+
 int menuSel (int menuVar, int pos)
 {
-  if (menuVar == 0 && pos == 0)
+  if (menuVar == 0 && pos == 0) // Run function will run the system to continuously measure and record
+                                // data based off user sample rate
   {
     int sleepLoop;
     lcd.clear();
     lcd.setCursor(0,0);
     if(getFreq() == 0)
     {
-      sleepLoop = 5;
+      sleepLoop = 5; // if user does not set sample rate, 5 minutes is standard
     }
     else
     {
-      sleepLoop = getFreq();
+      sleepLoop = getFreq(); // sample frequency is grabbed by the user input
     }
 
-    //lcd.print(sleepLoop);
-
-    //delay(1000);
     lcd.clear();
     lcd.setBacklight(NONE); // Turn backlight OFF   
     lcd.noDisplay();
-    while(true)
+    
+    while(true) // continuous loop for system to measure and store data
     {
       DateTime now = rtc1.now();
+      /*
       Serial.print("Enter Sleep Mode   ");
 
       Serial.print(now.year(), DEC);
@@ -438,53 +451,60 @@ int menuSel (int menuVar, int pos)
       Serial.print(F(":"));
       Serial.print(now.second(), DEC);
       Serial.println();
+      */
       
       delay(30);
-      counterLoop = 0;
-      while(counterLoop != sleepLoop)
+      counterLoop = 0; // counter set at zero
+      
+      while(counterLoop != sleepLoop) // loop will run and wake the system up every minute until the counterLoop
+                                      // matches the set sample rate
       {
         sleepSetup();
         delay(30);
-        sleepNow();
+        sleepNow(); // system will sleep
         delay(100);
         counterLoop++;
       }
 
       
-      Serial.println("Out of Sleep Mode");
-      
-      DatalogTemp();
-      delay(10);
-      
-      DatalogDO();
-      delay(10);
 
-      DatalogPH(); 
-      delay(10);
+    //Each if statement checks to see if the user has toggled each probe ON or OFF. If off, that probe will not be measure and recorded
 
-      DatalogCond();
+    if(getToggleTemp() == 1)
+    {
+      DatalogTemp(); // Temperature will record and store value on SD
       delay(10);
+    }
 
-      //DatalogVolt();
+    if(getToggleDO() == 1)
+    {
+      DatalogDO(); // DO will record and store value on SD
+      delay(10);
+    }
+
+    if(getTogglePH() == 1)
+    {
+      DatalogPH(); // PH will record and store value on SD
+      delay(10);
+    }
+
+    if(getToggleCond() == 1)
+    {
+      DatalogCond(); //  Conductivity will record and store value on SD
+      delay(10);
+    }
+
       delay(100);
     }
     
-    /*
-    lcd.setCursor(0,0);
-    lcd.print(F("        "));
-    lcd.setCursor(0, 0);
-    lcd.print("*");
-    lcd.print(menu[0]);
-    lcd.setCursor(1,1);
-    lcd.print(menu[1]);
-    setPos(0);
-    return 0;
-    */
   }
   
-  if (menuVar == 0 && pos == 1)  //Sample Now
+  if (menuVar == 0 && pos == 1)  // Sample now will measure and display every measurement on the LCD
   {
     lcd.clear();
+    
+    //Each if statement checks to see if the user has toggled each probe ON or OFF. If off, that probe will not be measure and recorded
+    
     if(getToggleTemp() == 1)
     {
       lcd.print("Temp:");
@@ -539,7 +559,7 @@ int menuSel (int menuVar, int pos)
     return 0;
   }
   
-  if (menuVar == 0 && pos == 2) // toggle submenu
+  if (menuVar == 0 && pos == 2) // toggle submenu, displays each probe with an ON/OFF text as an indicator on the current position
   {
     lcd.setCursor(0,0);
     lcd.print("*");
@@ -587,7 +607,7 @@ int menuSel (int menuVar, int pos)
     return lcdSampleRate();
   }
 
-  if (menuVar == 0 && pos == 4)
+  if (menuVar == 0 && pos == 4)   // displays both date and time when called
   {
     lcd.clear();
     
@@ -602,21 +622,21 @@ int menuSel (int menuVar, int pos)
     return 3;
   }
 
-  if (menuVar == 0 && pos == 5)
+  if (menuVar == 0 && pos == 5)   // Allows the user to toggle the light on and off
   {
     lcd.clear();
     
     lcd.setCursor(0,0);
     lcd.print("*");
     lcd.setCursor(1,0);
-    lcd.print(subSleep[0]);
+    lcd.print(subLight[0]);
     lcd.setCursor(1,1);
-    lcd.print(subSleep[1]);
+    lcd.print(subLight[1]);
     setPos(0);
     return 4;
   }
 
-  if (menuVar == 0 && pos == 6)
+  if (menuVar == 0 && pos == 6) // Allows the user to toggle the light on and off
   {
     lcd.clear();
     
@@ -630,10 +650,9 @@ int menuSel (int menuVar, int pos)
     return 5;
   }
 
-  if (menuVar == 1 && pos == 0)  // temperature toggle
+  if (menuVar == 1 && pos == 0)  // submenu 1 temperature toggle
   {
     
-    //Serial.println(getToggleTemp());
     if (getToggleTemp() == 1)
     {
       setToggleTemp(0);
@@ -654,7 +673,7 @@ int menuSel (int menuVar, int pos)
     return 1;
   }
 
-  if (menuVar == 1 && pos == 1)  // pH toggle
+  if (menuVar == 1 && pos == 1)  // submenu 1 pH toggle
   {
     if (getTogglePH() == 1)
     {
@@ -676,7 +695,7 @@ int menuSel (int menuVar, int pos)
     return 1;
   }
 
-  if (menuVar == 1 && pos == 2)  // conductivity toggle
+  if (menuVar == 1 && pos == 2)  // submenu 1 conductivity toggle
   {
     if (getToggleCond() == 1)
     {
@@ -698,7 +717,7 @@ int menuSel (int menuVar, int pos)
     return 1;
   }
 
-  if (menuVar == 1 && pos == 3)  // disolved oxygen toggle
+  if (menuVar == 1 && pos == 3)  // submenu 1 DO toggle
   {
     if (getToggleDO() == 1)
     {
@@ -720,31 +739,35 @@ int menuSel (int menuVar, int pos)
     return 1;
   }
 
-  if (menuVar == 3 && pos == 0)  //Date Mod
+  if (menuVar == 3 && pos == 0)  //Date change function
   {
     dateMod();
     menuLeft();
     return 0;
   }
 
-  if (menuVar == 3 && pos == 1)  //Time Mod
+  if (menuVar == 3 && pos == 1)  //Time Change function
   {
     timeMod();
     menuLeft();
     return 0;
   }
+
   
-  /*
-  if (menuVar == 4 && pos == 0)  //SleepMode ON
+  if (menuVar == 4 && pos == 0)  //Backlight ON
   {
-
+    lcd.setBacklight(WHITE);
+    setPos(0);
+    return 4;
   }
 
-  if (menuVar == 4 && pos == 1)  //SleepMode OFF
+  if (menuVar == 4 && pos == 1)  //Backlight OFF
   {
-    
+    lcd.setBacklight(NONE);
+    setPos(0);
+    return 4;
   }
-  */
+
   
   if (menuVar == 5 && pos == 0)  //Backlight ON
   {
@@ -762,6 +785,15 @@ int menuSel (int menuVar, int pos)
    
 }
 
+/******************************************************
+*Left Button
+*
+*Description - This button will essentially return the
+*GUI back to the original startup display without any
+*changes (more simply) a back button
+*
+******************************************************/
+
 void menuLeft()
 {
   lcd.clear();
@@ -778,11 +810,16 @@ void menuLeft()
 }
 
 
-//Setters and Getters
-//
-//
-//
-int getmenuVar() //  menu Variable
+/******************************************************
+*Setters and Getters
+*
+*Description - This potion of the code is in charge of
+*returning and storing particular variables based of the
+*UI
+*
+******************************************************/
+
+int getmenuVar() //  particular menu or submenu selected by user  
 {
      return menuVar;
 }
@@ -793,8 +830,9 @@ void setmenuVar(int Menu)
 }
 
 
-///////////////
-int getPos() //  position Variable
+////////////////////////////////////////////////////////////
+
+int getPos() //  position of the lcd based off user interface at the moment
 {
      return pos;
 }
@@ -805,8 +843,9 @@ void setPos(int Position)
 }
 
 
-///////////////
-int getFreq() //  freq Variable
+////////////////////////////////////////////////////////////
+
+int getFreq() //  the sample frequency set by the user
 {
      return freq;
 }
@@ -817,7 +856,8 @@ void setFreq(int tot)
 }
 
 
-///////////////
+////////////////////////////////////////////////////////////
+
 bool getToggleTemp() //  temperature toggle
 {
      return temp;
@@ -829,7 +869,8 @@ void setToggleTemp(bool tog1)
 }
 
 
-///////////////
+////////////////////////////////////////////////////////////
+
 bool getTogglePH() //  pH  toggle
 {
      return pH;
@@ -841,7 +882,8 @@ void setTogglePH(bool tog2)
 }
 
 
-///////////////
+////////////////////////////////////////////////////////////
+
 bool getToggleCond() //  conductivity  toggle
 {
      return cond;
@@ -853,7 +895,8 @@ void setToggleCond(bool tog3)
 }
 
 
-///////////////
+////////////////////////////////////////////////////////////
+
 bool getToggleDO() //  DO  toggle
 {
      return dO;
@@ -865,8 +908,9 @@ void setToggleDO(bool tog4)
 }
 
 
-///////////////
-int getYear() // year set
+////////////////////////////////////////////////////////////
+
+int getYear() // new year is set based off user
 {
     return yearSet;
 }
@@ -877,8 +921,9 @@ void setYear(int yearNew)
 }
 
 
-///////////////
-int getMonth() // month set
+////////////////////////////////////////////////////////////
+
+int getMonth() // new month is set based off user
 {
     return monthSet;
 }
@@ -889,8 +934,9 @@ void setMonth(int monthNew)
 }
 
 
-///////////////
-int getDay() // day set
+////////////////////////////////////////////////////////////
+
+int getDay() // new day is set based off user
 {
     return daySet;
 }
@@ -900,9 +946,9 @@ void setDay(int dayNew)
     daySet = dayNew;
 }
 
+////////////////////////////////////////////////////////////
 
-///////////////
-int getHour() // hour set
+int getHour() // new hour is set based off user
 {
     return hourSet;
 }
@@ -913,8 +959,9 @@ void setHour(int hourNew)
 }
 
 
-///////////////
-int getMinute() // min set
+////////////////////////////////////////////////////////////
+
+int getMinute() // new minute is set based off user
 {
     return minuteSet;
 }
@@ -925,8 +972,9 @@ void setMinute(int minuteNew)
 }
 
 
-///////////////
-int getSecond() // sec set
+////////////////////////////////////////////////////////////
+
+int getSecond() // new second is set based off user
 {
     return secondSet;
 }
@@ -937,10 +985,24 @@ void setSecond(int secondNew)
 }
 
 
-///////Misc Functions///////
-////////////////////////////
-////////////////////////////
-////////////////////////////
+/******************************************************
+*Miscellaneous Functions
+*
+*Description - Most of these fucntions are called upon
+*once a section is button selected for user change.
+*These fucntions can range from user set sample rate to 
+*modding time and date
+*
+******************************************************/
+
+
+/*
+ * Display Toggle 
+ * 
+ * This function allows the user to set each probe on
+ * or off before measuring and collecting data
+ */
+ 
 void displayToggle()
 {
   if (getmenuVar() == 1)
@@ -1061,7 +1123,14 @@ void displayToggle()
 }
 
 
-/////////////////////////////////////////
+/*
+ * Display Date
+ * 
+ * This function grabs the set data on the RTC 
+ * at the momment and displays it on the screen
+ * 
+ */
+ 
 void displayDate()
 {
   DateTime now = rtc1.now();
@@ -1152,7 +1221,18 @@ void displayDate()
 }
 
 
-//////////////////////////////////////
+/*
+ * LCD Sample Rate
+ * 
+ * This function allows the user to set the sample
+ * rate at which the device will record data. 
+ * Using the up and down buttons, the LCD will
+ * display and increase/decrease on a rate of 5.
+ * The select button will store the user sample
+ * rate
+ * 
+ */
+ 
 int lcdSampleRate()
 {
   lcd.clear();
@@ -1169,11 +1249,11 @@ int lcdSampleRate()
   lcd.setCursor(15,1);
   lcd.print(freqMin);
   bool b = 1;
-  while(b)
+  while(b) // runs loop until b = 0
   {
     
     uint8_t lcd_key = lcd.readButtons();
-    if (lcd_key == BUTTON_UP)
+    if (lcd_key == BUTTON_UP) // The up button will display a 5 minute increase up until 24 hours
     {
       if (freqHr == 24)
       {
@@ -1221,7 +1301,7 @@ int lcdSampleRate()
     }
 
     
-    else if (lcd_key == BUTTON_DOWN)
+    else if (lcd_key == BUTTON_DOWN) // The down button will display a 5 minute decrease to 5 minutes minimum
     {
       if (freqMin == 5 && freqHr == 0)
       {
@@ -1296,7 +1376,7 @@ int lcdSampleRate()
       }
     }
 
-    else if (lcd_key == BUTTON_LEFT)
+    else if (lcd_key == BUTTON_LEFT) // Left button returns to main menu without any changes
     {
       lcd.clear();
       menuLeft();
@@ -1305,7 +1385,7 @@ int lcdSampleRate()
       b = 0; // end loop
     }
 
-    else if (lcd_key == BUTTON_SELECT)
+    else if (lcd_key == BUTTON_SELECT) // select button stores the user sample rate and returns home
     {
       Serial.println(freqMin);
       Serial.println(freqHr);
@@ -1325,6 +1405,16 @@ int lcdSampleRate()
   return 0;
 }
 
+/*
+ * Mod Date
+ * 
+ * This function will be called when the Date is being changed 
+ * by the user. This fucntion will call the Mod year, month, 
+ * and day functions in order for the user to set accordingly.
+ * The function will then call the RTC and store the new
+ * set values
+ * 
+ */
 
 void dateMod()
 {
@@ -1353,6 +1443,17 @@ void dateMod()
   return; 
 }
 
+/*
+ * Mod Time
+ * 
+ * This function will be called when the Time is being changed 
+ * by the user. This fucntion will call the Mod Hour, Minute, 
+ * and Second functions in order for the user to set accordingly.
+ * The function will then call the RTC and store the new
+ * set values
+ * 
+ */
+ 
 void timeMod()
 {
   DateTime now = rtc1.now();
@@ -1380,8 +1481,18 @@ void timeMod()
   return;
 }
 
-//////////////////////////////////////////
-void modYear()
+/*
+ * Mod Year/Month/Day/Hour/Minute/Second
+ * 
+ * These function are called during either the mod date
+ * or mod time. Each function will display a text to "please
+ * set year, month, day, ect." and the user will be able to 
+ * change the variable using the Up and Down buttons.
+ * Select will store the variable.
+ * 
+ */
+
+void modYear() // set year by user 2018 - 2050
 {
   lcd.clear();
   int yearNew = 18;
@@ -1438,7 +1549,9 @@ void modYear()
   }
 }
 
-void modMonth()
+////////////////////////////////////////////////////////////////////////////////////
+
+void modMonth() // set month by user 1 - 12
 {
   lcd.clear();
   int monthNew = 1;
@@ -1502,7 +1615,9 @@ void modMonth()
   }
 }
 
-void modDay()
+////////////////////////////////////////////////////////////////////////////////////
+
+void modDay() // set day by user 1 - 31
 {
   lcd.clear();
   int dayNew = 1;
@@ -1565,9 +1680,11 @@ void modDay()
     delay(50);
   }
 }
-//////////////////////////////////////////////////////////////
 
-void modHour()
+
+////////////////////////////////////////////////////////////////////////////////////
+
+void modHour() // set hour by user 1 - 24
 {
   lcd.clear();
   int hourNew = 1;
@@ -1633,7 +1750,9 @@ void modHour()
   }
 }
 
-void modMinute()
+////////////////////////////////////////////////////////////////////////////////////
+
+void modMinute() // set minute by user 0 - 59
 {
   lcd.clear();
   int minuteNew = 0;
@@ -1697,7 +1816,9 @@ void modMinute()
   }
 }
 
-void modSecond()
+////////////////////////////////////////////////////////////////////////////////////
+
+void modSecond() // set second by user 0 - 59
 {
   lcd.clear();
   int secondNew = 0;
