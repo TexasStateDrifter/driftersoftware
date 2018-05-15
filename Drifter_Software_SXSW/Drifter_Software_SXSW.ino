@@ -39,7 +39,7 @@ Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
 #define WHITE   0x7
 
 // Number of total MENU options -- Modify the number of rows in the array
-#define MENU_COUNT 7
+#define MENU_COUNT 6
 
 // Sub menu Options and Sizes
 #define SUBSENSOR_COUNT 4
@@ -70,11 +70,10 @@ int secondSet;
 int counterLoop;
 
 // all menu Arrays                                                                      
-String const menu[MENU_COUNT+1] PROGMEM = {"Run        ","Sample Now ","Sensors    ","Sample Freq","Time/Date  ","Backlight  ","Backlight  ","           "};
+String const menu[MENU_COUNT+1] PROGMEM = {"Run        ","Sample Now ","Sensors    ","Sample Freq","Time/Date  ","Backlight  ","           "};
 String const subSensor[5] PROGMEM = {"Temp        ","pH          ","Cond.       ","D.O.       "};
 String const subSampleFreq[3] PROGMEM = {"    Mod Rate    ","HR:MIN     00:0"};
 String const subDate[3] PROGMEM = {"Date","Time"};
-String const subSleep[3] PROGMEM = {"ON","OFF"};
 String const subLight[3] PROGMEM = {"ON","OFF"};
 
 
@@ -90,7 +89,7 @@ void setup()
   lcd.print(menu[0]);
   lcd.setCursor(1,1);
   lcd.print(menu[1]);
-  lcd.setBacklight(0x7);
+  lcd.setBacklight(0x2);
   pinMode(DoSensorPin,INPUT);
   readDoCharacteristicValues();
 }
@@ -186,15 +185,10 @@ int menuSize(int menuVar)
 
     case 4:
     {
-      return SUBSLEEP_COUNT;   //submenu 2 (count 2)
-      break;
-    }
-
-    case 5:
-    {
       return SUBLIGHT_COUNT;   //submenu 2 (count 2)
       break;
     }
+
   }
 }
 
@@ -245,14 +239,6 @@ String* menuNumb (int menuVar)
     }
 
     case 4:
-    {
-      String* point = subSleep;
-      return point;
-      delete[] point;    
-      break;
-    }
-
-    case 5:
     {
       String* point = subLight;
       return point;
@@ -755,7 +741,7 @@ int menuSel (int menuVar, int pos)
   
   if (menuVar == 4 && pos == 0)  //Backlight ON
   {
-    lcd.setBacklight(WHITE);
+    lcd.setBacklight(GREEN);
     setPos(0);
     return 4;
   }
@@ -763,24 +749,10 @@ int menuSel (int menuVar, int pos)
   if (menuVar == 4 && pos == 1)  //Backlight OFF
   {
     lcd.setBacklight(NONE);
-    setPos(0);
+    setPos(1);
     return 4;
   }
 
-  
-  if (menuVar == 5 && pos == 0)  //Backlight ON
-  {
-    lcd.setBacklight(WHITE);
-    setPos(0);
-    return 5;
-  }
-
-  if (menuVar == 5 && pos == 1)  //Backlight OFF
-  {
-    lcd.setBacklight(NONE);
-    setPos(1);
-    return 5;
-  }
    
 }
 
