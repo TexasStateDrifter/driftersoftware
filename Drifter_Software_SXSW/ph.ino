@@ -7,9 +7,12 @@ int buf[10],temp1;
 /******************************************************
 * GetPH
 *
-* Description - This function runs a bit adder algorithm
-* that measures temperature in celcius and returns
-* an integer based off an array sum
+* Description - This function reads 10 analog reads,
+* stores them into an array, sort them from small to
+* large. The program will find the average of the middle 
+* 6 values. From here the system will convert the volt to
+* millivolt and run a function to convert to pH. The pH
+* is then returned as a float
 *
 *
 ******************************************************/

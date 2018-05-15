@@ -3,7 +3,6 @@
 //Modify this code as you see fit.
 //This code will output data to the Arduino serial monitor.
 //Type commands into the Arduino serial monitor to control the EC circuit.
-//This code was written in the Arduino 1.6.5 IDE
 //An Arduino MEGA was used to test this code.
 
 
@@ -17,6 +16,13 @@ float TDSset;
 float SALset;
 float GRAVset;
 
+/*
+ * EC Setup 
+ * 
+ * This function allows the user to set each probe on
+ * or off before measuring and collecting data
+ */
+ 
 void ECsetup() 
 {
   Serial.begin(9600);                                 //set baud rate for the hardware serial port_0 to 9600
@@ -37,18 +43,26 @@ void serialEvent3() {                                 //if the hardware serial p
   sensor_string_complete = true;                      //set the flag used to tell if we have received a completed string from the PC
 }
 
+/******************************************************
+* Run EC
+*
+* Description - This function runs a loop that populates
+* an input string based on EC and will end the loop when
+* the string array is filled, parsed, and converted to float
+*
+*
+******************************************************/
 
 void runEC()                        
 {
    int r = 1;
-   while(r){
-    
+   while(r) // program will run until a conductivity measurement is read
+   { 
     serialEvent3();
-     
-  
+      
 
-    if (input_string_complete == true) 
-    {                //if a string from the PC has been received in its entirety
+    if (input_string_complete == true) //if a string from the PC has been received in its entirety
+    {                
     Serial3.print(inputstring);                       //send that string to the Atlas Scientific product
     Serial3.print('\r');                              //add a <CR> to the end of the string
     inputstring = "";                                 //clear the string
@@ -80,28 +94,17 @@ void runEC()
         SAL = strtok(NULL, ",");                            //let's pars the array at each comma
         GRAV = strtok(NULL, ",");                           //let's pars the array at each comma
       
-        ecNumb = atof(EC);
-        tdsNumb = atof(TDS);
-        salNumb = atof(SAL);
-        gravNumb = atof(GRAV);
+        ecNumb = atof(EC);           //EC is converted to float
+        tdsNumb = atof(TDS);         //TDS is converted to float
+        salNumb = atof(SAL);         //SAL is converted to float
+        gravNumb = atof(GRAV);       //GRAV is converted to float
       
-        //Serial.print("EC:");                                //we now print each value we parsed separately
-        //Serial.println(EC);                                 //this is the EC value
-        setEC(ecNumb);
-      
-        //Serial.print("TDS:");                               //we now print each value we parsed separately
-        //Serial.println(TDS);                                //this is the TDS value
-        setTDS(tdsNumb);
-      
-        //Serial.print("SAL:");                               //we now print each value we parsed separately
-        //Serial.println(SAL);                                //this is the salinity value
-        setSAL(salNumb);
-      
-        //Serial.print("GRAV:");                              //we now print each value we parsed separately
-        //Serial.println(GRAV);                               //this is the specific gravity
-        setGRAV(gravNumb);
-        //Serial.println();                                   //this just makes the output easer to read
-        r = 0;
+        setEC(ecNumb);               //EC is set to a setter function
+        setTDS(tdsNumb);             //TDS is set to a setter function
+        setSAL(salNumb);             //SAL is set to a setter function
+        setGRAV(gravNumb);           //GRAV is set to a setter function
+        
+        r = 0;                       //r is set at zero to end the while loop
     }
     sensorstring = "";                                //clear the string
     sensor_string_complete = false;                   //reset the flag used to tell
@@ -109,12 +112,16 @@ void runEC()
   }
 }
 
-void ledOff()
-{
-                                           
-}
 
-float getEC()
+/*
+ * Get/Set Functions
+ * 
+ * A getter and setter function that is stored and called
+ * in order to return multiple values for storage
+ * 
+ */
+ 
+float getEC() // Conductivity Read
 {
   return ECset;
 }
@@ -124,8 +131,9 @@ void setEC(float ecNumb)
   ECset = ecNumb;
 }
 
+//////////////////////////////////////////////////
 
-float getTDS()
+float getTDS() // Total Dissolved Solids Read
 {
   return TDSset;
 }
@@ -136,8 +144,9 @@ void setTDS(float tdsNumb)
 }
 
 
+//////////////////////////////////////////////////
 
-float getSAL()
+float getSAL() // Salinity Read
 {
   return SALset;
 }
@@ -148,8 +157,9 @@ void setSAL(float salNumb)
 }
 
 
+//////////////////////////////////////////////////
 
-float getGRAV()
+float getGRAV() // Gravity Read
 {
   return GRAVset;
 }

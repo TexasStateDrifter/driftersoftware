@@ -11,7 +11,7 @@ OneWire ds(DS18S20_Pin);  // on digital pin 4
 *
 * Description - This function runs a bit adder algorithm
 * that measures temperature in celcius and returns
-* an integer based off an array sum
+* a float based off an array sum
 *
 *
 ******************************************************/

@@ -13,7 +13,6 @@
 * 
 ************************************************************/
 #include <Wire.h>
-//#include <LowPower.h>
 #include <avr/sleep.h>
 #include <avr/power.h>
 #include <avr/pgmspace.h>

@@ -36,15 +36,18 @@ const float SaturationValueTab[41] PROGMEM = {      //saturation dissolved oxyge
 6.41,
 };
 
+/******************************************************
+* Get DO
+*
+* Description - This function runs a loop until the analog
+* read is not a 0
+*
+*
+******************************************************/
+
 float getDO()
 {
-  /*
-  if(counter
-  {
-    pinMode(DoSensorPin,INPUT);
-    readDoCharacteristicValues(); 
-  }
-  */
+
    doValue = 0;
    while(doValue == 0)
    {
