@@ -25,7 +25,7 @@
 #include <avr/pgmspace.h>
 #include <EEPROM.h>
 
-#define DoSensorPin  A1    //dissolved oxygen sensor analog output pin to arduino mainboard
+#define DoSensorPin  A8    //dissolved oxygen sensor analog output pin to arduino mainboard
 #define VREF 5000    //for arduino uno, the ADC reference is the AVCC, that is 5000mV(TYP)
 float doValue;      //current dissolved oxygen value, unit; mg/L
 float temperature = 25;    //default temperature is 25^C, you can use a temperature sensor to read it
@@ -126,9 +126,9 @@ boolean serialDataAvailable(void)
     receivedChar = Serial.read();
     if (receivedChar == '\n' || receivedBufferIndex == ReceivedBufferLength)
     {
-	receivedBufferIndex = 0;
-	strupr(receivedBuffer);
-	return true;
+  receivedBufferIndex = 0;
+  strupr(receivedBuffer);
+  return true;
     }else{
         receivedBuffer[receivedBufferIndex] = receivedChar;
         receivedBufferIndex++;
@@ -206,25 +206,25 @@ int getMedianNum(int bArray[], int iFilterLen)
       int bTab[iFilterLen];
       for (byte i = 0; i<iFilterLen; i++)
       {
-	  bTab[i] = bArray[i];
+    bTab[i] = bArray[i];
       }
       int i, j, bTemp;
       for (j = 0; j < iFilterLen - 1; j++) 
       {
-	  for (i = 0; i < iFilterLen - j - 1; i++) 
+    for (i = 0; i < iFilterLen - j - 1; i++) 
           {
-	    if (bTab[i] > bTab[i + 1]) 
+      if (bTab[i] > bTab[i + 1]) 
             {
-		bTemp = bTab[i];
-	        bTab[i] = bTab[i + 1];
-		bTab[i + 1] = bTemp;
-	     }
-	  }
+    bTemp = bTab[i];
+          bTab[i] = bTab[i + 1];
+    bTab[i + 1] = bTemp;
+       }
+    }
       }
       if ((iFilterLen & 1) > 0)
-	bTemp = bTab[(iFilterLen - 1) / 2];
+  bTemp = bTab[(iFilterLen - 1) / 2];
       else
-	bTemp = (bTab[iFilterLen / 2] + bTab[iFilterLen / 2 - 1]) / 2;
+  bTemp = (bTab[iFilterLen / 2] + bTab[iFilterLen / 2 - 1]) / 2;
       return bTemp;
 }
 
@@ -243,3 +243,4 @@ void readDoCharacteristicValues(void)
       EEPROM_write(SaturationDoTemperatureAddress, SaturationDoTemperature);
     }    
 }
+
