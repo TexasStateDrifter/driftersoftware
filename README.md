@@ -2,9 +2,6 @@
 
 Water Quality Drifter
 
-One Paragraph of project description goes here
-Getting Started. <--- Delete this section after completion. 
-
 The NASA Drifter project is an ongoing environmental endeavor in designing a low cost, multi-parameter buoy that records dissolved oxygen, salinity, total dissolved solids, pH, and temperature in a given body of water. The purpose of this project is to provide a low-cost system in which allows collaboration between NASA and local high school students or hobbyist to have a hands-on learning experience with professional guidance. Given a manual, a parts list, open source code, and CAD files to 3D print the housing, students or hobbyist may follow the steps to assemble the system and collect data at a local body of water.
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
