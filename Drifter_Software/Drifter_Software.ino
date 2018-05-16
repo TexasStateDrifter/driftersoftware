@@ -976,6 +976,7 @@ void setSecond(int secondNew)
  
 void displayToggle()
 {
+  delay(10);
   if (getmenuVar() == 1)
   {
     if(getPos() == 0 || getPos() == 1)
