@@ -78,8 +78,8 @@ void DatalogTemp()
     {
       //Display data and time on both Serial and SD for testing
       
-      Serial.println(F("   "));
-      dataFileTemp.println(F("   "));
+      //Serial.println(F("   "));
+      //dataFileTemp.println(F("   "));
       
       float temperature = getTemp(); // function to measure temperature
       DateTime now = rtc.now();
@@ -119,7 +119,7 @@ void DatalogTemp()
       Serial.print(now.minute(), DEC);
       Serial.print(F(":"));
       Serial.print(now.second(), DEC);
-      Serial.println();
+      //Serial.print();
       
       dataFileTemp.print(now.year(), DEC);
       dataFileTemp.print('/');
@@ -134,7 +134,7 @@ void DatalogTemp()
       dataFileTemp.print(now.minute(), DEC);
       dataFileTemp.print(':');
       dataFileTemp.print(now.second(), DEC);
-      dataFileTemp.println(); 
+      //dataFileTemp.print(); 
 
       dataFileTemp.close();
     }
@@ -160,8 +160,8 @@ void DatalogPH()
     {
       //Display data and time on both Serial and SD for testing
       
-      Serial.println(F("   "));
-      dataFilePH.println(F("   "));
+      //Serial.println(F("   "));
+      //dataFilePH.println(F("   "));
       
       float ph = getPH();
       DateTime now = rtc.now();
@@ -189,7 +189,7 @@ void DatalogPH()
       Serial.print(now.minute(), DEC);
       Serial.print(F(":"));
       Serial.print(now.second(), DEC);
-      Serial.println();
+      //Serial.print();
       
       dataFilePH.print(now.year(), DEC);
       dataFilePH.print('/');
@@ -204,7 +204,7 @@ void DatalogPH()
       dataFilePH.print(now.minute(), DEC);
       dataFilePH.print(':');
       dataFilePH.print(now.second(), DEC);
-      dataFilePH.println(); 
+      //dataFilePH.print(); 
 
       dataFilePH.close();
     }
@@ -231,20 +231,20 @@ void DatalogDO()
     {
       //Display data and time on both Serial and SD for testing
       
-      Serial.println(F("   "));
-      dataFileDO.println(F("   "));
+      //Serial.print(F("   "));
+      //dataFileDO.print(F("   "));
       
       float DO = getDO();
       DateTime now = rtc.now();
       
       Serial.print(DO);
       dataFileDO.print(DO);
-      Serial.println(F(","));
-      dataFileDO.println(F(","));
+      Serial.print(F(","));
+      dataFileDO.print(F(","));
       Serial.print(F("mg/L"));
       dataFileDO.print(F("mg/L"));
-      Serial.println(F(","));
-      dataFileDO.println(F(","));
+      Serial.print(F(","));
+      dataFileDO.print(F(","));
 
       
       Serial.print(now.year(), DEC);
@@ -253,14 +253,14 @@ void DatalogDO()
       Serial.print(F("/"));
       Serial.print(now.day(), DEC);
 
-      Serial.println(F(","));
+      Serial.print(F(","));
 
       Serial.print(now.hour(), DEC);
       Serial.print(F(":"));
       Serial.print(now.minute(), DEC);
       Serial.print(F(":"));
       Serial.print(now.second(), DEC);
-      Serial.println();
+      //Serial.print();
       
       dataFileDO.print(now.year(), DEC);
       dataFileDO.print('/');
@@ -268,14 +268,14 @@ void DatalogDO()
       dataFileDO.print('/');
       dataFileDO.print(now.day(), DEC);
             
-      dataFileDO.println(F(","));
+      dataFileDO.print(F(","));
 
       dataFileDO.print(now.hour(), DEC);
       dataFileDO.print(':');
       dataFileDO.print(now.minute(), DEC);
       dataFileDO.print(':');
       dataFileDO.print(now.second(), DEC);
-      dataFileDO.println(); 
+      //dataFileDO.print(); 
 
       dataFileDO.close();
     }
@@ -301,8 +301,8 @@ void DatalogCond()
     {
       //Display data and time on both Serial and SD for testing
       
-      Serial.println(F("   "));
-      dataFileCond.println(F("   "));
+      //Serial.println(F("   "));
+      //dataFileCond.println(F("   "));
 
       DateTime now = rtc.now();
       runEC(); // Fucntion called to run a conductivity measuring loop
@@ -363,7 +363,7 @@ void DatalogCond()
       Serial.print(now.minute(), DEC);
       Serial.print(F(":"));
       Serial.print(now.second(), DEC);
-      Serial.println();
+      //Serial.print();
       
       dataFileCond.print(now.year(), DEC);
       dataFileCond.print('/');
@@ -378,7 +378,7 @@ void DatalogCond()
       dataFileCond.print(now.minute(), DEC);
       dataFileCond.print(':');
       dataFileCond.print(now.second(), DEC);
-      dataFileCond.println();
+      //dataFileCond.print();
       
       dataFileCond.close();
     }

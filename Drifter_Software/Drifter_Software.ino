@@ -92,6 +92,12 @@ void setup()
   lcd.setBacklight(0x2);
   pinMode(DoSensorPin,INPUT);
   readDoCharacteristicValues();
+  pinMode(A13, OUTPUT);
+  digitalWrite(A13, LOW);
+  pinMode(A14, OUTPUT);
+  digitalWrite(A14, LOW);
+  pinMode(A15, OUTPUT);
+  digitalWrite(A15, LOW);
 }
 
 
@@ -407,7 +413,7 @@ int menuSel (int menuVar, int pos)
     lcd.setCursor(0,0);
     if(getFreq() == 0)
     {
-      sleepLoop = 5; // if user does not set sample rate, 5 minutes is standard
+      sleepLoop = 1; // if user does not set sample rate, 5 minutes is standard
     }
     else
     {
@@ -463,20 +469,38 @@ int menuSel (int menuVar, int pos)
 
     if(getToggleDO() == 1)
     {
+      pinMode(A13, OUTPUT);
+      digitalWrite(A13, HIGH);
       DatalogDO(); // DO will record and store value on SD
+      delay(10);
+      pinMode(A13, OUTPUT);
+      digitalWrite(A13, LOW);
       delay(10);
     }
 
     if(getTogglePH() == 1)
     {
+      pinMode(A14, OUTPUT);
+      digitalWrite(A14, HIGH);
       DatalogPH(); // PH will record and store value on SD
+      delay(10);
+      pinMode(A14, OUTPUT);
+      digitalWrite(A14, LOW);
       delay(10);
     }
 
     if(getToggleCond() == 1)
     {
+      pinMode(A15, OUTPUT);
+      digitalWrite(A15, HIGH);
+      for(int i = 0; i<4; i++)
+      {
+        runEC();
+      }
       DatalogCond(); //  Conductivity will record and store value on SD
       delay(10);
+      pinMode(A15, OUTPUT);
+      digitalWrite(A15, LOW);
     }
 
       delay(100);
@@ -499,21 +523,36 @@ int menuSel (int menuVar, int pos)
     lcd.clear();
     if(getToggleDO() == 1)
     {
+      pinMode(A13, OUTPUT);
+      digitalWrite(A13, HIGH);
       lcd.print("DO:");
       lcd.print(getDO());
       delay(3000);
+      pinMode(A13, OUTPUT);
+      digitalWrite(A13, LOW);
+      delay(1000);
     }
     lcd.clear();
     if(getTogglePH() == 1)
     {
+      pinMode(A14, OUTPUT);
+      digitalWrite(A14, HIGH);
       lcd.print("pH:");
       lcd.print(getPH());
       delay(3000);
+      pinMode(A14, OUTPUT);
+      digitalWrite(A14, LOW);
+      delay(1000);
     }
     lcd.clear();
     if(getToggleCond() == 1)
     {
-      runEC();
+      pinMode(A15, OUTPUT);
+      digitalWrite(A15, HIGH);
+      for(int i = 0; i<5; i++)
+      {
+        runEC();
+      }
       lcd.setCursor(0,0);
       lcd.print("EC:");
       lcd.print(getEC());
@@ -533,6 +572,10 @@ int menuSel (int menuVar, int pos)
       lcd.print("GRAV:");
       lcd.print(getGRAV());
       delay(3000);
+
+      pinMode(A15, OUTPUT);
+      digitalWrite(A15, LOW);
+      delay(1000);
     }
     lcd.clear();
     lcd.setCursor(0,0);
