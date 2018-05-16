@@ -15,7 +15,7 @@ boolean sensor_string_complete = false;               //have we received all the
 
 void setup() {                                        //set up the hardware
   Serial.begin(9600);                                 //set baud rate for the hardware serial port_0 to 9600
-  Serial3.begin(9600);                                //set baud rate for software serial port_3 to 9600
+  Serial3.begin(38400);                                //set baud rate for software serial port_3 to 9600
   inputstring.reserve(10);                            //set aside some bytes for receiving data from the PC
   sensorstring.reserve(30);                           //set aside some bytes for receiving data from Atlas Scientific product
 }
