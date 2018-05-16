@@ -6,7 +6,7 @@
  # SKU    : SEN0161
 */
 
-#define SensorPin A0            //pH meter Analog output to Arduino Analog Input 0
+#define SensorPin A9            //pH meter Analog output to Arduino Analog Input 0
 #define Offset 0.00            //deviation compensate
 #define LED 13
 #define samplingInterval 20
@@ -35,10 +35,10 @@ void loop(void)
   }
   if(millis() - printTime > printInterval)   //Every 800 milliseconds, print a numerical, convert the state of the LED indicator
   {
-	Serial.print("Voltage:");
+  Serial.print("Voltage:");
         Serial.print(voltage,2);
         Serial.print("    pH value: ");
-	Serial.println(pHValue,2);
+  Serial.println(pHValue,2);
         digitalWrite(LED,digitalRead(LED)^1);
         printTime=millis();
   }
@@ -82,3 +82,4 @@ double avergearray(int* arr, int number){
   }//if
   return avg;
 }
+
