@@ -1,5 +1,5 @@
 #define SensorPin 9 //pH meter Analog output to Arduino Analog Input 9
-#define Offset -0.23
+#define Offset 0.00
 unsigned long int avgValue;  //Store the average value of the sensor feedback
 float b;
 int buf[10],temp1;
