@@ -413,7 +413,7 @@ int menuSel (int menuVar, int pos)
     lcd.setCursor(0,0);
     if(getFreq() == 0)
     {
-      sleepLoop = 1; // if user does not set sample rate, 5 minutes is standard
+      sleepLoop = 5; // if user does not set sample rate, 5 minutes is standard
     }
     else
     {

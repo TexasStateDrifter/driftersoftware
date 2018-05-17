@@ -134,7 +134,7 @@ void DatalogTemp()
       dataFileTemp.print(now.minute(), DEC);
       dataFileTemp.print(':');
       dataFileTemp.print(now.second(), DEC);
-      //dataFileTemp.print(); 
+      dataFileTemp.println(); 
 
       dataFileTemp.close();
     }
@@ -204,7 +204,7 @@ void DatalogPH()
       dataFilePH.print(now.minute(), DEC);
       dataFilePH.print(':');
       dataFilePH.print(now.second(), DEC);
-      //dataFilePH.print(); 
+      dataFilePH.println(); 
 
       dataFilePH.close();
     }
@@ -275,7 +275,7 @@ void DatalogDO()
       dataFileDO.print(now.minute(), DEC);
       dataFileDO.print(':');
       dataFileDO.print(now.second(), DEC);
-      //dataFileDO.print(); 
+      dataFileDO.println(); 
 
       dataFileDO.close();
     }
@@ -378,7 +378,7 @@ void DatalogCond()
       dataFileCond.print(now.minute(), DEC);
       dataFileCond.print(':');
       dataFileCond.print(now.second(), DEC);
-      //dataFileCond.print();
+      dataFileCond.println();
       
       dataFileCond.close();
     }
